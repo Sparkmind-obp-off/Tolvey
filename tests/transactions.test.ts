@@ -25,7 +25,7 @@ const key = () => 'checkout-test-' + newId();
 
 async function sqlFile(database: D1Database, file: string) {
   const sql = readFileSync(file, 'utf8');
-  const parts = file.endsWith('0002_transaction_core.sql')
+  const parts = sql.includes('-- statement-breakpoint')
     ? sql.split('\n-- statement-breakpoint\n')
     : sql.replace(/^--.*$/gm, '').split(/;\s*(?:\n|$)/);
   await database.batch(
@@ -58,6 +58,7 @@ beforeEach(async () => {
   await sqlFile(db, 'migrations/0001_canonical_catalog.sql');
   await sqlFile(db, 'tests/fixtures/local-catalog.sql');
   await sqlFile(db, 'migrations/0002_transaction_core.sql');
+  await sqlFile(db, 'migrations/0003_transaction_lifecycle.sql');
 });
 afterEach(async () => {
   await runtime?.dispose();

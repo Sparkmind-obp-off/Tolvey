@@ -42,6 +42,14 @@ Inputs are bounded/validated: 2048-byte streamed JSON, UUIDs, integer quantity 1
 
 Snapshots/version-content and append-only audit are enforced in D1. Events contain safe identifiers/state/duplicate context, not sensitive payloads. These are baseline controls, not a complete security/recovery audit or verified provider/callback implementation.
 
+## Phase 2 continuation security
+
+Internal lifecycle is reachable only by imported local/test simulation functions, never HTTP routes or browser success/status. Production/staging configuration fails closed and the production application excludes the simulation module. A VerifiedPaymentSignal type is not authentication; provider/merchant verification requires a later reviewed adapter gateway.
+
+Money is copied from immutable order data and matched exactly on signals. Revision CAS + ownership-gated batch + immutable receipt/fingerprint/key aliases protect replay/conflict. Terminal states/identity/confirmation history are guarded; refund exposes pending/requested only. No actual external side effect or credentials are involved. Existing private non-production checkout API remains flag/token protected and production-forbidden; no new secrets or supplied payment credentials were used.
+
+150 tests cover these boundaries. Pattern hygiene is not a full security audit. Provider credentials shared outside approved storage must be rotated before provider work; do not resubmit replacements through chat.
+
 ## Incident response
 
 For a suspected credential leak: disable/rotate credential; inspect affected scope; invalidate sessions/tokens where possible; inspect logs; document incident; restore minimum required access; record remediation.

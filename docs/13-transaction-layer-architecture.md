@@ -201,29 +201,29 @@ Emit events such as:
 
 Every event should carry correlation IDs and safe references.
 
-## Implemented Phase 2 checkpoint — 2026-09-30
+## Implemented Phase 2 lifecycle — 2026-09-30
 
-Status: **Implemented + locally Verified; Phase 2 IN PROGRESS**, not end-to-end commerce.
+**Implemented + locally Verified; Phase 2 COMPLETE in the latest local/test scope.** Git delivery is evidenced in the final session report. Production remains foundation-only. No customer transaction is inferred.
 
-Migration 0002 adds `checkout_sessions`, `orders`, `payments`, `fulfillments`, and append-only `transaction_events`. Payment and fulfillment execution are not implemented by the presence of these tables.
+Migrations 0002 and additive 0003 persist CheckoutSession/Order/Payment/Fulfillment, events, revision and immutable operation/key/replay ledgers. Canonical active offer data produces immutable purchase snapshots in one creation batch, including a BLOCKED fulfillment and no payment. Version content and purchase/payment identity are immutable.
 
-Implemented flow:
-`active canonical Offer/Product/ProductVersion → immutable CheckoutSession → pending Order → BLOCKED Fulfillment + creation audit`.
+`createSimulationCore(db, environment)` provides internal local/test-only orchestration. No HTTP mutation route calls it; the production Hono bundle excludes it. Trusted environment is not customer input. A TypeScript signal shape does not authenticate a provider. Future adapters need a separately reviewed verified gateway; Phase 2 does not implement one.
 
-- One D1 batch inserts checkout, order, blocked fulfillment and two creation events atomically. No payment row or confirmation/revenue event is manufactured.
-- Monetary values are selected/calculated from canonical records at SQL write time. Input is offer UUID, quantity 1–100, source label, optional opaque customer UUID; client totals/currency/status/private delivery fields are rejected.
-- Session lifetime is fixed at 30 minutes. Expiration timestamp is durable and cannot be extended by retry. Automatic expiration/status reconciliation remains to be implemented; returning an existing snapshot is not permission to initiate payment after expiry.
-- UUID identities and stable `TV-<UUID hex>` transaction reference precede provider initiation. Snapshots preserve price, currency/exponent, quantity, names, version label and private delivery reference even if catalog price/name later changes.
-- Referenced version identity/content is immutable after first checkout; lifecycle archival remains allowed. Composite relationships prevent mismatched offer/product/version. Use a new offer to change the version once the old offer is referenced.
-- `checkout.create:v1` operation scope plus SHA-256 idempotency key/request hashes; same key/meaning returns the same order; changed meaning returns 409. Keys are scoped to a single trusted internal service, not customer or marketplace tenants.
-- Concurrent checkout creation uses uniqueness and `ON CONFLICT DO NOTHING`; the winning snapshot is retrieved after commit. Failure anywhere in the batch rolls all creation side effects back.
-- Events record state, original correlation ID, current request ID and duplicate marker. Replays are deduplicated by request ID; creation events are not repeated. Audit is not a financial ledger.
-- Schema defense in depth: one order/session and fulfillment/order, one live payment attempt/order, unique provider/reference, payment/order money composite FK, one payment.confirmed event/order, immutable snapshots, append-only events, legal order-state graph/status checks, and a barrier against unpaid fulfillment.
-- `assertTransition` and `PaymentAdapter`/`VerifiedPaymentSignal` declare provider-neutral contracts. No provider implementation, signal-ingestion service, or arbitrary state-transition API exists yet. SQL constraints do not verify a real provider signal.
+Implemented sequence: OFFER_READY → CHECKOUT_STARTED → PAYMENT_PENDING → PAYMENT_CONFIRMED → FULFILLMENT_PENDING → FULFILLED. Failure, expiry, cancellation and fulfillment retry are implemented; REFUND_PENDING is request-only, with no REFUNDED service.
 
-Verification: 40 checkpoint tests on real local D1 and compiled workerd plus the unchanged 69 Phase 1 tests passed (109 total). Includes 12 concurrent identical requests, concurrent conflicting meaning, injected batch failure/retry, immutable snapshots, integer-money boundaries, FK checks, schema dedup constraints, protected API failures, and client-money rejection. Local Wrangler creation/replay/status reads were observed with a temporary ignored service credential; payments remained PENDING and fulfillment BLOCKED.
+- Initiation stores a durable attempt/reference and SQL-copies canonical integer money/currency/exponent from the order. Customer money/status are not accepted.
+- CONFIRMED/FAILED internal signals must match provider, payment reference, transaction reference and exact expected money. Pending payable order/payment and unexpired deadline required. Signal provider/event identity and normalized request hash detect replay/conflict; new events after terminal confirmation are rejected.
+- Each batch inserts an operation receipt conditional on the order revision/state; all entity/event writes require its newly generated ownership UUID. The receipt reserves one operation per revision. CAS loser cannot run its side effects. Audit failure rolls back the entire batch; transient failure may retry with the same key.
+- Idempotency keys are operation-scoped SHA-256 hashes, payloads are canonicalized. Additional retry keys for duplicate event identity become immutable aliases, so later changed meaning cannot reuse them. Replays are separately append-only and keyed by request ID; events do not repeat.
+- Expiry lifetime is 30 minutes. Explicit expiry/cancel synchronizes checkout/order/pending payment. Pending fulfillment remains BLOCKED on expiry or becomes CANCELLED on cancellation. No scheduled worker/sweep exists; payment entry always checks expiry even if no sweep ran. Failed payment closes checkout as CANCELLED while preserving PAYMENT_FAILED/FAILED/BLOCKED truth.
+- Fulfillment authorization requires confirmed payment. Failure preserves confirmation; retry uses a new authorization key and the same fulfillment row. Replaying an older authorization cannot reopen the failure. Completion is local simulated orchestration evidence, not actual delivery.
+- Refund request sets order/payment REFUND_PENDING, preserves money/provider/reference/confirmed_at, cancels pending fulfillment and preserves existing FULFILLED/FAILED history. Duplicate requests replay. No provider call, refund-completed event or assertion of money returned.
 
-Remaining required Phase 2 gate: persistent payment initiation/verified-signal handling, atomic cross-entity transitions, expiration/cancellation, fulfillment authorization/retry/completion, refund operations where required, full test-provider lifecycle, duplicate callback/revenue/concurrent-transition tests, and release/deployment identity handling. No actual payment/delivery is claimed and no real provider was connected.
+Receipts record original from/to states, expected revision, payment identity, timestamp and request context; current state must be read separately. Different competing commands may return CONCURRENT_TRANSITION (409); re-read current truth before retrying. Matching retries can return an older receipt without changing current truth.
+
+Verified: 150 tests, including 41 new lifecycle tests on real D1 and a separately bundled in-memory workerd lifecycle harness. Covers full happy path, mismatches, terminal and malformed signals, 12 identical concurrent initiations/confirmations, conflicting meanings, unique reference races, cancellation/refund/fulfillment races, eight injected audit-fault rollback/retry paths, immutability, fresh and existing-record upgrades. Events are audit, not a financial ledger or measured revenue.
+
+Remaining outside Phase 2: provider authenticity/merchant verification, callbacks, actual payment/delivery/refund, public customer UX/access/rate limits, reconciliation/recovery and deliberate remote release. No Phase 3 implementation.
 
 ## Architecture rule
 TOLVEY owns the canonical transaction model.

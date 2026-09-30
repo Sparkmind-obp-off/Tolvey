@@ -39,7 +39,7 @@ Current foundation:
 - Git-based release discipline
 
 Planned:
-- provider-neutral transaction core
+- provider authentication/callback gateway (internal provider-neutral core is implemented)
 - Duitku POP adapter
 - fulfillment/delivery
 - distribution adapters
@@ -58,12 +58,12 @@ Phase 1 Foundation Gate:
 
 This is technical foundation evidence, not evidence of commercial success.
 
-Phase 2 execution checkpoint (2026-09-30), **in progress**:
-- Implemented + locally Verified: durable schema, atomic checkout/pending order, immutable snapshots, idempotency/audit, and a feature-flagged protected internal non-production API.
-- Verified: 109 automated tests (69 Phase 1 regressions + 40 checkpoint tests), typecheck/format/build, local upgrade/fresh migrations, 12-request concurrency, rollback/retry, and local create/replay/protected status reads.
-- Planned/not verified: complete payment-to-fulfillment lifecycle, provider signal ingestion, expiry/cancellation, refund/fulfillment operations, and production release of transaction APIs.
-- Deployment unchanged: production remains Phase 1 at webapp-3-38j.pages.dev; no remote migration or DNS change. Target tolvey.pages.dev is not achieved or proven available.
-- No real payment, delivered customer outcome, revenue, or Money Kit market evidence exists from this checkpoint.
+Phase 2 continuation (2026-09-30): **COMPLETE within provider-neutral local/test scope**, with Git delivery evidenced by final report/history.
+- Implemented + Verified: checkout/payment/fulfillment orchestration, exact references/money, expiry/cancellation, failure/retry, safe refund-request representation, atomic revision CAS/operation audit/dedup.
+- Verified: 150 tests, full lifecycle in compiled workerd simulation, concurrency, eight rollback/retry failure paths, fresh/upgrade migrations preserving checkpoint data, typecheck/format/build, FK/integrity and local runtime deny-by-default.
+- Not implemented: real provider authentication/callbacks, actual payment/delivery/refund, public customer checkout or production commerce release.
+- Production remains Phase 1 at webapp-3-38j.pages.dev; no remote migration/deploy/DNS changes. Target hostname/domain not achieved or proven available.
+- No real customer outcome, revenue, demand or Money Kit market evidence.
 
 ## 9. What is intentionally not claimed
 - no real customer transaction yet
@@ -100,7 +100,7 @@ Recommended deck:
 9. Data/D1 architecture
 10. Integration architecture
 11. Security/reliability
-12. Verified Phase 1 evidence and explicitly partial Phase 2 checkpoint
+12. Verified Phase 1 and provider-neutral local/test Phase 2 evidence (not production commerce)
 13. Roadmap
 14. Business validation gate
 15. Closing: real transaction evidence as the final proof

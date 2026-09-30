@@ -90,6 +90,12 @@ The Phase 2 execution checkpoint is partial and non-production only. No remote m
 
 Pending release work: deliberately verify allocation/migration of the target identity before production deployment. If exact `tolvey.pages.dev` is unavailable, report the actual allocation error and stop that identity change, preserving the existing project. Do not suffix-generate a substitute production identity. `tolvey.biz.id` attachment remains unperformed/unverified. Staging quota remains a known operational concern from Phase 1, not a reason to share production D1.
 
+## Phase 2 continuation deployment boundary — 2026-09-30
+
+The local/test lifecycle continuation gate is complete without remote release, per the newer explicit instruction. No account setup/resource creation/deploy/remote migration/secret/DNS changes were performed in this continuation. The historical identity audit above remains historical evidence, not a new availability check. Production stays Phase 1; migrations 0002/0003 remain local-only. Built application excludes the simulation factory and has no signal/fulfillment/refund mutation routes.
+
+Future release still requires deliberate identity allocation review, environment separation, staging quota resolution and commerce access/recovery gates. None is disguised as achieved by core simulation. Do not enable internal checkpoint APIs in production.
+
 ## 9. Production gate
 A deployment is not a commerce launch.
 

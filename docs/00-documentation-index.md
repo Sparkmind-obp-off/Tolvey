@@ -89,7 +89,7 @@ Credit/session limits may require multiple Genspark working sessions, but they d
 Current state:
 - Phase 0 — Audit: complete
 - Phase 1 — Foundation: complete
-- Phase 2 — Transaction Core: in progress; verified local checkpoint for atomic checkout/pending order, protected internal reads, schema/audit/idempotency. Full payment-to-fulfillment gate is not complete.
+- Phase 2 — Transaction Core: COMPLETE within the latest provider-neutral local/test continuation gate; 150 tests, atomic lifecycle, expiry/cancel, fulfillment retry and refund-request representation verified. Git delivery evidence is in the final session report. No production commerce/provider/delivery readiness is claimed.
 - Phase 3 — Duitku POP: planned
 - Phase 4 — Product-to-Commerce Loop: planned
 - Phase 5 — Distribution: planned

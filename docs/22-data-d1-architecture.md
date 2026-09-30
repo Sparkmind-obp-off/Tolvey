@@ -44,7 +44,15 @@ Creation uses one D1 batch and SQL `INSERT ... SELECT` from active parents at wr
 
 Verified fresh migrations and upgrade over existing Phase 1 fixture catalog in real workerd D1; Wrangler local upgrade and rerun; FK check empty. **Migration 0002 has NOT been applied remotely.** Existing migration 0001 is unchanged. Explicit statement-breakpoint comments delimit complete trigger statements in the test harness; production SQL still runs through Wrangler migration tooling.
 
-The full state/signal/fulfillment orchestration is still planned. Schema constraints alone do not authenticate callbacks, synchronize every entity on a transition, process expiry, or deliver products. Customer UUID is opaque/non-PII; contact/customer identity/consent/retention collection is out of this checkpoint. Transaction/audit records have no destructive rollback/delete workflow.
+Full internal local/test orchestration is now implemented (see below); schema constraints still do not authenticate callbacks or deliver products. Customer UUID is opaque/non-PII; contact/customer identity/consent/retention is outside Phase 2. No destructive transaction rollback/delete workflow.
+
+### Additive migration 0003 — implemented and locally verified
+
+`orders.revision` defaults to zero for existing checkpoint rows. Immutable transaction_operations store operation/key/request hashes, optional globally unique signal identity, expected revision, from/to states, payment FK, request ID/time; unique `(order_id, expected_revision)` prevents stale concurrent writes. Deferred payment FK supports initiation in the same batch. Immutable transaction_operation_keys preserve duplicate-signal key aliases; append-only transaction_operation_replays record duplicate request IDs/times without repeating business events.
+
+Additional triggers freeze payment identity/expected money and existing confirmed_at, enforce payment/fulfillment transitions, freeze fulfillment identity and prevent terminal checkout reopening. 0001/0002 were not changed. All new lifecycle entity/event writes are gated by the newly inserted operation UUID in the same batch, using revision/state CAS. Immutable original receipts are returned; current state is read separately.
+
+Fresh Wrangler 0001→0002→0003 and local upgrade with an existing order passed; reruns no-op. Workerd upgrade tests preserve an existing checkpoint snapshot and then initiate its payment. FK checks empty. D1 API denied integrity_check (SQLITE_AUTH); offline read-only integrity_check on both local SQLite databases returned ok. No migration was applied remotely. Eight injected audit failures proved whole-batch rollback then same-key retry. 150 tests passed. This is operational simulation evidence only, not a provider/delivery ledger.
 
 ## 5. Integrity
 Use:

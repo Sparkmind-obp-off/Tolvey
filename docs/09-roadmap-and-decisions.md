@@ -79,6 +79,13 @@ Deployment decision: preserve the existing Phase 1 Pages project and remote sche
 Evidence: 109 passing tests, local fresh/upgrade migrations and runtime create/replay/authorization checks. No confirmed payment or completed delivery is claimed.
 Affected documents: README, docs/00, 02, 07, 09, 12, 13, 15, 21, 22, 23, 25, 26. This does not change the owned-product/no-marketplace model.
 
+### D-007 — Complete provider-neutral Phase 2 locally, no remote release (2026-09-30)
+Decision: follow the latest continuation gate, finishing internal lifecycle without a provider, public mutations or production enablement. No Phase 3 work.
+Context: baseline d0c7b5a has durable checkout/schema but no lifecycle. Add migration 0003 only; preserve prior migrations/production identity.
+Reason/trade-off: revision-owned D1 batches and immutable operation/key/replay receipts provide concurrency/atomicity without queues or new dependencies. Expose a local/test-only simulation factory, not an arbitrary public success endpoint. Future real adapters require authenticated gateway review. REFUND_PENDING is request-only, never external refund confirmation.
+Evidence: 150 tests, compiled workerd lifecycle, eight rollback/retry paths, fresh/upgrade/FK/integrity, build/typecheck/format and PM2 deny-by-default. Git delivery recorded in final report. No money/customer/delivery/revenue/demand evidence manufactured.
+Affected docs: README, 00, 07, 09, 12, 13, 15, 21, 22, 23, 25, 26. No commercial-model or phase numbering change.
+
 ## Change rule
 
 Any change to brand, business model, or core architecture requires a written decision with context, evidence, decision, trade-offs, affected documents, and date.

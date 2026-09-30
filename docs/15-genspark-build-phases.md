@@ -146,9 +146,9 @@ Build:
 Gate:
 - a test order can move safely through checkout/payment/fulfillment states without a provider
 
-### Phase 2 execution checkpoint — 2026-09-30
+### Historical Phase 2 execution checkpoint — 2026-09-30
 
-Status: **in progress**, not Phase 2 completion. There are no externally named subdivisions.
+Status at that checkpoint: **in progress**, not Phase 2 completion. Superseded by the continuation evidence below. There are no externally named subdivisions.
 
 Purpose: preserve the audited Phase 1 runtime and latest commercial architecture while establishing durable atomic checkout/pending-order truth and a controlled non-production read/write boundary.
 
@@ -166,6 +166,16 @@ Remaining mandatory Phase 2 work: payment initiation/signal processing, complete
 Next bounded execution session remains **PHASE 2**: implement atomic provider-neutral payment transition/orchestration with expected-reference/amount checks, idempotency and concurrency tests plus expiry/cancellation handling. Do not implement Duitku or real delivery. Release/deploy only after the appropriate gate review; do not attach production D1 to preview or create another unrelated Pages project.
 
 Git commit/push/clean-state evidence is reported after execution in the final session report. This checkpoint is not an authorization to enter Phase 3.
+
+### Phase 2 continuation evidence — 2026-09-30
+
+Status: **COMPLETE under the latest explicit local/test continuation gate**, subject to clean commit/push/matching-main evidence in the final session report. The newer command does not require remote deployment and forbids production transaction APIs. This closes the single Phase 2, not a new named phase.
+
+Baseline d0c7b5a; migration 0003 adds revision CAS, immutable operation/key/replay ledgers, payment identity/confirmation and terminal-state guards; 0001/0002 unchanged. Internal local/test simulation core implements payment initiation, exact reference/money confirmation/failure, expiry/cancel, fulfillment authorize/complete/fail/retry and refund request only. All state/event writes occur in one owned D1 batch; matching receipts replay without reopening state. No actual delivery/refund/payment/provider signal authenticity is claimed.
+
+Verification: 150 tests (69 foundation, 40 checkpoint, 41 lifecycle), typecheck/format/build (~40.05 kB), 12 concurrent initiations/confirmations, event/key conflicts, terminal/money/reference mismatches, cancellation and fulfillment/refund races, eight audit-fault rollback/retry paths, compiled in-memory lifecycle Worker execution, fresh/upgrade migrations with an existing checkpoint order, rerun no-op, FK empty and local read-only SQLite integrity ok. D1 API disallows integrity_check; offline local SQLite supplied that evidence. npm audit zero known vulnerabilities. PM2 built Worker: health/ready 200, default internal API 503, signal POST 405.
+
+Production and desired identity remain unchanged as documented in docs/25. No secret was introduced or supplied provider credential used; no new lifecycle HTTP endpoints. Future remote release, provider authenticity, actual delivery/refund, staging quota, canonical DNS identity and commerce recovery are outside this continuation gate, not accomplished business evidence. Do not enter Phase 3 without a separate explicit request.
 
 ## Phase 3 — Duitku POP
 Build:

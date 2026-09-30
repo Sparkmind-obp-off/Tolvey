@@ -51,7 +51,7 @@ The initial build-wrapper 404 bug was found during deployed verification, fixed 
 
 Not executed/implemented: checkout/payment/Duitku tests, commerce E2E, delivery/analytics tests, full security audit, recovery rehearsal, or controlled real customer transactions. Remote staging D1 provisioning failed due to account quota; preview intentionally has no DB and cannot share production. No optional staging readiness claim is made.
 
-## Phase 2 checkpoint verification — 2026-09-30
+## Historical Phase 2 checkpoint verification — 2026-09-30
 
 Status: complete checkpoint verification, **not complete Phase 2 gate**.
 
@@ -62,9 +62,19 @@ Status: complete checkpoint verification, **not complete Phase 2 gate**.
 - Local runtime observed create 201, replay 200, protected pending-order read 200, unauthenticated 401, ready 200 with ephemeral ignored local credential. No real or simulated successful payment is claimed by those requests.
 - Build approximately 39.81 kB; npm audit zero known vulnerabilities at verification time.
 
-Missing required Phase 2 verification: persistent full lifecycle, callback processing/idempotent confirmation, cancellation/expiry, failure/retry after payment, exactly-once operational fulfillment, refund flow, duplicate revenue under complete transition scenarios, and release/deployment identity gate. Schema-only test inserts are constraint tests, not provider confirmation or business evidence.
+Missing at that historical checkpoint (superseded below): persistent full lifecycle, callback processing/idempotent confirmation, cancellation/expiry, failure/retry after payment, exactly-once operational fulfillment, refund flow, duplicate revenue under complete transition scenarios, and release/deployment identity gate. Schema-only test inserts are constraint tests, not provider confirmation or business evidence.
 
 No new remote deployment/migration was performed. Production Phase 1 stays intact. Test credentials are ephemeral and never committed; final source/build/history/log hygiene and Git delivery evidence are recorded in the session report. Do not release this checkpoint as customer commerce.
+
+## Phase 2 continuation verification — 2026-09-30
+
+Executed: npm run check, 150 tests in five suites (69 foundation + 40 checkpoint + 41 lifecycle), typecheck/format/build (~40.05 kB), npm audit zero known vulnerabilities. Includes 12 concurrent initiations/confirmations, conflicting keys/events/reference reuse, monetary mismatches, cancelled/expired/terminal orders, failure/retry, cancellation/refund/completion races, immutable receipts, no duplicate confirmation event, eight injected audit-failure whole-batch rollback/retry paths. Exact-once internal record transitions are not exactly-once external delivery.
+
+Lifecycle was additionally bundled into an in-memory test-only Worker and executed inside actual workerd with D1: confirmation concurrency, fulfillment fail/retry/complete and refund pending. The production Hono bundle omits the simulator and contains no lifecycle mutation routes. Production/staging simulator creation is rejected. PM2 built production-surface Worker returned health/ready 200, default internal API 503 and signal POST 405, without adding secrets.
+
+Fresh/upgrade Wrangler local migrations passed; existing checkpoint order preserved; fresh/upgrade FK checks empty and reruns no-op. D1 API denied integrity_check, so local read-only SQLite checks returned ok instead. Migration 0001/0002 bytes unchanged. No remote database mutation/deploy. Git fsck passed; final source/history/build/log hygiene and clean pushed-main evidence belong to final report.
+
+Phase 2 continuation gate is complete upon Git delivery; provider sandbox/real customer/payment/delivery/refund, public access/rate limits, canonical remote identity and recovery remain future gates. Phase 3 has not started.
 
 ## Foundation rollback guidance (not a rehearsed commerce rollback)
 

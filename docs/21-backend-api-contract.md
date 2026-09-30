@@ -26,7 +26,7 @@ Phase 1 public catalog mutations still return 405. Phase 2 adds only the protect
 
 ## 4. Implemented transaction checkpoint API (non-production)
 
-Status: locally verified, Phase 2 in progress. Not a customer checkout API.
+Status: locally verified protected checkpoint API; Phase 2 local/test lifecycle gate is now complete. Not a customer checkout API.
 
 Authorization/configuration: `DB`, explicit non-production APP_ENV, `TRANSACTION_CORE_ENABLED=true`, and random private `TRANSACTION_CORE_TOKEN` (32–256 characters). Bearer credential is server-side only. One internal service principal may read all checkpoint records; no customer/tenant authorization is claimed. Production is rejected even with the flag/token, and default configuration is disabled. No public exposure before rate-limit/access/full-lifecycle review.
 
@@ -38,9 +38,19 @@ Authorization/configuration: `DB`, explicit non-production APP_ENV, `TRANSACTION
 - `/ready` retains default foundation behavior and adds transaction-schema/config probes when the flag is true.
 - GET/HEAD/OPTIONS conventions stay intact; only the exact checkpoint create POST bypasses the global mutation barrier. Other mutation paths still return 405. No payment-confirmation/fulfillment/arbitrary transition mutation route exists.
 
-Expiry/cancellation/payment/fulfillment operational mutation capabilities are not yet implemented; status currently preserves initial pending/blocked truth. The expiry timestamp is not an automatic expired-state service. Stable transaction reference is provider-neutral, not yet validated against a provider's request constraints.
+Expiry/cancellation/payment/fulfillment capabilities are implemented as internal functions only (below), not HTTP routes. Expiry is explicit, not scheduled; initiation/confirmation reject overdue orders regardless of sweep. Stable transaction reference is provider-neutral; real provider constraints/authentication remain Phase 3.
 
-## Planned remaining transaction API
+## Implemented internal lifecycle contract (no HTTP)
+
+`createSimulationCore(db, environment)` accepts only trusted local/test configuration. Methods: initiatePayment(id,{provider,provider_reference},context); processSignal(id,normalizedSignal,context); expireOrder/cancelOrder/authorizeFulfillment/completeFulfillment/failFulfillment/requestRefund(id,context).
+
+Context: operation-scoped key, UUID request_id, optional trusted test/local UTC Date. Return `{receipt,replayed}` with immutable original outcome, not current state. Same meaning replays; changed key/event meaning conflicts. Signal status allowed only CONFIRMED/FAILED, exact provider/payment/transaction reference and canonical amount/currency/exponent match. No browser Request is accepted, no provider verification is claimed. Environment checks reject staging/production; no application route imports the simulator.
+
+409 codes include IDEMPOTENCY_CONFLICT, CONCURRENT_TRANSITION, terminal/invalid states, expired order, reference/money mismatches, reference reuse, unpaid fulfillment/refund. Invalid shape/context/key is 400, missing order 404, unavailable atomic transaction 503. No SQL/raw errors in outward lifecycle errors. New key required for retry authorization after failed fulfillment. Repeated expiry/cancel/refund requests replay the original transition even with a new key. REFUNDED is not exposed.
+
+Readiness with the transaction flag requires migration 0003's revision/operation/key/replay schema as well as 0002. Disabled/default catalog readiness remains backward-compatible.
+
+## Planned public transaction API
 The exact routes may evolve, but the domain capabilities are:
 - create checkout session
 - retrieve checkout session
@@ -86,4 +96,4 @@ Prefer additive, backward-compatible API changes.
 Breaking public contract changes require a documented migration/version strategy.
 
 ## 10. Current status
-Foundation public reads and protected non-production checkout/pending-order creation/reads are implemented and locally verified. Payment/signal/fulfillment lifecycle services and public customer checkout are planned. Phase 2 is incomplete; the checkpoint has not been deployed or migrated remotely.
+Foundation reads, protected non-production checkout/order API and internal local/test lifecycle are implemented and verified (150 tests). Phase 2 continuation gate is complete, subject to final Git delivery. Public customer checkout/provider verification are not implemented. Transaction migrations/services have not been deployed or migrated remotely.

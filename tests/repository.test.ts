@@ -65,6 +65,9 @@ describe('repository safety boundaries', () => {
     const index = read('src/index.ts');
     expect(index).not.toMatch(/app\.(post|put|patch|delete)\(/);
     expect(index).not.toMatch(/\/api\/(checkout|payments|fulfillment)/);
+    expect(index).not.toContain('transaction-lifecycle');
+    expect(read('dist/_worker.js')).not.toContain('SIMULATION_FORBIDDEN');
+    expect(read('dist/_worker.js')).not.toContain('createSimulationCore');
     const types = read('src/types.ts').split('export interface PublicOffer')[1];
     expect(types).not.toContain('delivery_reference');
   });

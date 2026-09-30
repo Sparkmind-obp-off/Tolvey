@@ -43,10 +43,19 @@ export interface OrderRecord extends Omit<
 export async function verifyTransactionSchema(db: D1Database): Promise<void> {
   await db.batch([
     db.prepare('SELECT id, request_hash FROM checkout_sessions LIMIT 0'),
-    db.prepare('SELECT id, state, payment_status FROM orders LIMIT 0'),
+    db.prepare(
+      'SELECT id, state, payment_status, revision FROM orders LIMIT 0',
+    ),
     db.prepare('SELECT id, provider, status FROM payments LIMIT 0'),
     db.prepare('SELECT id, status FROM fulfillments LIMIT 0'),
     db.prepare('SELECT id, dedup_key FROM transaction_events LIMIT 0'),
+    db.prepare(
+      'SELECT id, expected_revision FROM transaction_operations LIMIT 0',
+    ),
+    db.prepare('SELECT key_hash FROM transaction_operation_keys LIMIT 0'),
+    db.prepare(
+      'SELECT operation_id FROM transaction_operation_replays LIMIT 0',
+    ),
   ]);
 }
 
