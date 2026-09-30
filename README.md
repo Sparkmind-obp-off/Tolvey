@@ -1,6 +1,8 @@
 # TOLVEY
 
-**Product House Hub + Commerce House Hub** for TOLVEY-owned products, initially serving Indonesia. Money Kit remains a product hypothesis, not an implemented commercial offer or evidence of demand.
+**Product House Hub + Commerce House Hub** for TOLVEY-owned products, initially serving Indonesia.
+
+Commercial architecture: **Layer 0 Free/Discovery → Layer 1 Digital Products → Distribution Layer → Layer 2 Services**. The canonical Layer 1 hierarchy is **Product Family → Single Product → Kit → Bundle → Complete System**. Money Kit remains a product hypothesis, not an implemented commercial offer or evidence of demand.
 
 One canonical product source -> many commerce/distribution channels -> one normalized transaction model -> one operational truth.
 
