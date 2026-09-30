@@ -8,6 +8,7 @@ Build the existing repository into a real, production-oriented commerce system.
 
 Brand: TOLVEY
 Positioning: Product House Hub + Commerce House Hub
+Commercial model: Layer 0 Free/Discovery → Layer 1 Digital Products → Distribution Layer → Layer 2 Services
 Domain: tolvey.biz.id
 Primary market: Indonesia
 Initial product hypothesis: Money Kit
@@ -18,6 +19,16 @@ TOLVEY is NOT a multi-vendor marketplace in V1.
 
 Core loop:
 Demand → Product → Package → Publish → Distribute → Sell → Deliver → Measure → Learn → Improve
+
+Canonical commercial architecture:
+- Layer 0 — Free / Discovery
+- Layer 1 — Digital Products
+- Distribution Layer — owned, storefront, marketplace, social and search/content channels
+- Layer 2 — Services / implementation / custom work
+
+Layer 1 hierarchy:
+Product Family → Single Product → Kit → Bundle → Complete System.
+The TOLVEY catalog is the product source of truth. Channel listings are derived representations. Layer 2 customization must not silently mutate Layer 1 master products.
 
 Core architecture:
 One canonical product source → many distribution channels → normalized transaction intelligence.
@@ -468,7 +479,9 @@ A real person must eventually be able to discover a real product, choose an offe
 
 Duitku POP is the first direct payment provider.
 External marketplaces/platforms are distribution channels.
+Free products are discovery/funnel assets, not a separate revenue engine.
 TOLVEY remains the canonical Product House + Commerce House.
+Layer 2 services are implementation/custom work and are separate from reusable Layer 1 product definitions.
 
 Execute phase-by-phase.
 Verify every gate.
