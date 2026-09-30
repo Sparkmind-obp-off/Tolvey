@@ -58,6 +58,16 @@ Start with:
 | 26 | Presentation/submission brief | Presentation source |
 | 27 | Commercial validation & metrics | Evidence/measurement authority |
 | 28 | Phase 2 Master System Prompt | Phase 2 execution authority |
+| 29 | Digital Product Architecture | Layer 1 product architecture |
+| 30 | Digital Product Catalog v1 | Initial catalog and price hypotheses |
+| 31 | Free & Funnel Product Strategy | Discovery/funnel architecture |
+| 32 | Distribution Layer Architecture | Channel architecture |
+| 33 | Layer 2 Service Architecture | Service architecture |
+| 34 | Commercial Architecture Master | Master commercial architecture |
+| 35 | Product Catalog Schema | Canonical product record schema |
+| 36 | Product Validation & Launch Gates | Product evidence gates |
+| 37 | Marketplace Listing Standard | Channel listing standard |
+| 38 | Distribution Operations & Attribution | Distribution operations/measurement |
 
 ## Status vocabulary
 
