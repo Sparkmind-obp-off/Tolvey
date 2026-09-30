@@ -6,9 +6,11 @@ Define how TOLVEY turns a validated problem into a repeatable product.
 
 ## Product hierarchy
 
-Master Brand -> Product Family -> Product -> Edition/Version -> Offer -> Asset/Delivery
+Master Brand → Product Family → Single Product → Kit → Bundle → Complete System
 
-Example: TOLVEY -> Money -> Money Kit -> v1 -> Standard Offer -> templates + guide + dashboard + supporting assets.
+Each sellable item resolves to a ProductVersion and Offer. Free/discovery products sit in Layer 0; reusable paid products are Layer 1; distribution is a separate cross-cutting layer; implementation/custom work belongs to Layer 2.
+
+Example: TOLVEY → Money → Money Kit → v1 → Standard Offer → templates + guide + dashboard + supporting assets.
 
 ## Product lifecycle
 
