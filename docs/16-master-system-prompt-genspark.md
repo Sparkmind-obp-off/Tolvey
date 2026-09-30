@@ -223,17 +223,22 @@ Gate:
 Architecture is confirmed and contradictions are resolved.
 
 ## PHASE 1 — FOUNDATION
-Implement:
-- app shell
-- environment configuration
-- canonical product model
-- product version
-- offer model
-- storefront
-- operator/admin foundation
+Scope updated by the explicit Phase 1 execution command on 2026-09-30. Phase 1 is one complete phase; internally bounded sessions must not invent externally named subdivisions.
 
-Gate:
-A canonical product can become a sellable offer.
+Implement:
+- TypeScript/Hono/Cloudflare Pages runtime and build
+- explicit local/test/production environment and secret boundaries
+- real D1 Product/ProductVersion/Offer schema, relationships, deterministic money, and migrations
+- health/readiness and minimal validated read-only catalog APIs
+- repository-safe configuration and optional local/test-only fixtures
+- real automated application/schema/API/repository/compiled-runtime tests
+- clean dependency install, typecheck, configured formatting, migration and runtime verification
+- accurate documentation and clean commit/push to main with verified remote SHA
+
+Do not implement checkout, payment, fulfillment, marketplace, public mutations, or premature operator authentication. Storefront purchase/operator workflow is future work, not a prerequisite added beyond this updated scope.
+
+Foundation Gate:
+A clean dependency environment and fresh D1 must install/build/migrate/test/start, expose health/readiness and verifiable canonical persistence/reads, protect secrets, and finish with committed/pushed/verified clean Git state. Only then may Phase 1 be marked complete and Phase 2 begin. Full commerce readiness is a different later gate.
 
 ## PHASE 2 — TRANSACTION CORE
 Implement:

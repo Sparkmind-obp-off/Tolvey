@@ -40,7 +40,7 @@ The architecture should remain compatible with a Cloudflare-based production sta
 Clarified by the Phase 0 audit on 2026-09-30. Use the gated execution plan in `docs/15-genspark-build-phases.md`, not a storefront-first implementation:
 
 0. Repository and architecture audit.
-1. Foundation: Cloudflare-compatible shell, environment configuration, persistent canonical Product/ProductVersion/Offer catalog, basic storefront, and protected operator foundation.
+1. Foundation: TypeScript/Hono/Pages runtime, safe environment configuration, D1 canonical Product/ProductVersion/Offer schema and migrations, health/readiness, read-only APIs, and automated tests with complete build/migration/Git gate. The latest Phase 1 command defers storefront and operator HTTP mutations/authentication.
 2. Provider-neutral transaction core: CheckoutSession, Order, Payment, Fulfillment, CustomerReference, Event, atomic transitions, idempotency, and audit trail.
 3. Duitku POP adapter and verified sandbox end-to-end evidence using current official documentation.
 4. Real product assets, customer delivery, and product-to-commerce evidence.
@@ -49,4 +49,17 @@ Clarified by the Phase 0 audit on 2026-09-30. Use the gated execution plan in `d
 7. Controlled production validation and rollback checks.
 8. Optimization only after real evidence.
 
-Minimum secret isolation, authorization, and input validation apply from the first implemented endpoint; Phase 6 does not defer these controls.
+Minimum secret isolation, authorization where required, and input validation apply from the first implemented endpoint; Phase 6 does not defer these controls.
+
+## Implemented foundation — 2026-09-30
+
+- Entry: `src/index.ts`; modules `src/config.ts`, `src/catalog.ts`, `src/types.ts`. No Node APIs or Node compatibility flags in the deployed application.
+- Build: Hono/Vite Pages advanced-mode Worker (`dist/_worker.js`), generated `_routes.json`, public static CSS. An explicit terminal route preserves JSON 404 through the build plugin's outer Hono wrapper.
+- D1: `DB` binding; `migrations/0001_canonical_catalog.sql`; three STRICT domain tables only. Composite FK on Offer prevents cross-product version linkage. Price exists only on Offer, as integer minor units with explicit currency/exponent. Lifecycle default DRAFT, no automatic publication.
+- Reads: health/readiness; active products; offers with active product/version/offer; limits 1–50 and optional UUID keyset cursor. Version metadata and opaque delivery reference stay private. There is no version API or delivery authorization.
+- Operational writes: trusted Cloudflare/D1 operator tooling only. No public admin/write endpoints, no implemented auth/publication service or version immutability enforcement. Operators must preserve UUIDv4 and timestamp conventions; supported currency/exponent business policy must be settled before checkout.
+- Errors/logging: UUID request IDs, structured bounded log fields, generic errors, no raw credentials/query/payload/SQL error text. Security headers apply to application responses; Pages serves static CSS.
+- Environments: local D1 state; ephemeral test/workerd D1; production `tolvey-production`; preview/staging no DB binding (fail closed). Remote staging awaits database quota capacity.
+- Deployment: new BYOK Pages project `webapp-3`, assigned URL https://webapp-3-38j.pages.dev; empty production catalog. Existing unrelated resources and business DNS were not changed.
+
+The wider component/entity/event lists above are planned architecture, not all implemented features. There are no transaction or marketplace tables, payment/provider adapters, fulfillment workers, event bus, analytics platform, storefront purchase flow, or operator dashboard in Phase 1.

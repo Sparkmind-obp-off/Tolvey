@@ -6,7 +6,7 @@ The phases below are business milestones, not engineering session gates. For eng
 
 ## Business milestone 0 — Foundation
 
-Status: documentation established; no application implementation exists at the audited main snapshot (832e4a4). Domain acquisition below is a repository assertion, not independently verified deployment evidence.
+Status: documentation established at the Phase 0 snapshot; Phase 1 now implements and verifies Hono/TypeScript/Pages runtime, D1 Product/ProductVersion/Offer schema, read-only APIs, and automated tests. This is technical foundation, not business product proof. Domain acquisition below remains a repository assertion; no custom-domain/DNS change was performed.
 
 - Brand locked operationally
 - Domain acquired: tolvey.biz.id
@@ -61,6 +61,14 @@ Reason: owning products and distribution is simpler and validates demand before 
 ### D-004 — Money Kit as first product territory
 Decision: WORKING HYPOTHESIS.
 Reason: aligned with practical product-kit architecture; still requires real demand and transaction validation.
+
+### D-005 — Complete Phase 1 scope clarification (2026-09-30)
+Decision: follow the latest explicit Phase 1 execution command, as one engineering phase with the complete Foundation Gate. Earlier storefront/operator requirements and externally named Phase 1 subdivisions are superseded.
+Context/evidence: baseline main `25feb61` contained documentation only; the current session establishes executable code, real D1, tests and read-only verification without customer checkout.
+Trade-off: do not build an operator authentication service while no operator HTTP mutations exist; trusted operator SQL is the only current catalog-write mechanism. Storefront commerce and authenticated operator writes remain future work.
+Affected documents: README and docs/02, 09, 11, 12, 15, 16.
+Security boundary: public mutations are denied; local/test never use remote production. Optional remote staging creation hit D1 quota; preview deliberately has no DB binding rather than sharing production.
+Money policy: Offer owns sale-price truth, stored as safe integer minor units with explicit currency/exponent. IDR uses whole-rupiah exponent 0 in test fixtures; production has no product/price records.
 
 ## Change rule
 

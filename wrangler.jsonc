@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "webapp-3",
+  "pages_build_output_dir": "./dist",
+  "compatibility_date": "2026-04-15",
+  "vars": { "APP_ENV": "production" },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "tolvey-production",
+      "database_id": "8d192958-5374-4196-bb3c-1ac21bd7f6ac",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "env": {
+    "preview": {
+      "vars": { "APP_ENV": "staging" },
+      "d1_databases": []
+    }
+  }
+}

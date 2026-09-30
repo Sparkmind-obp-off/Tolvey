@@ -28,7 +28,17 @@ Example: TOLVEY -> Money -> Money Kit -> v1 -> Standard Offer -> templates + gui
 
 ## Product record
 
-Every product should have: product_id, family, name, audience, problem solved, promise, included assets, format, version, price, cost assumptions, delivery method, supported channels, status, evidence, owner, created_at, updated_at.
+The wider product specification should eventually include product_id, family, name, audience, problem solved, promise, included assets, format, version, cost assumptions, delivery method, supported channels, status, evidence, owner, created_at, updated_at. Commercial price belongs to Offer; any product display price must be derived, never a second monetary source.
+
+## Implemented minimum — Phase 1, 2026-09-30
+
+- Product: UUID, name, unique slug, summary, lifecycle, timestamps.
+- ProductVersion: UUID, product FK, unique version label per product, lifecycle, object JSON metadata, timestamps.
+- Offer: UUID, matched product/version FK, name, integer `price_minor`, explicit currency/exponent, lifecycle, private opaque delivery reference, timestamps.
+- Lifecycle: DRAFT (default), ACTIVE, ARCHIVED. Public read APIs hide inactive records; an offer also requires active parent product/version.
+- Money: nonnegative integer bounded by JavaScript safe-integer range; test fixture 20000 IDR uses exponent 0, and 1999 USD/exponent 2 is verified. No floating monetary storage or real production price is seeded. Currency/exponent business policy precedes later checkout.
+
+This is the minimal canonical data foundation, not the complete wider product record. Product families/assets, immutable version publication rules, demand evidence, operator mutation/authentication, real Money Kit content, and delivery remain planned. Test fixtures are not commercial evidence.
 
 ## Product principles
 

@@ -1,0 +1,36 @@
+{
+  "name": "tolvey",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "wrangler pages dev dist --ip 0.0.0.0 --port 3000 --binding APP_ENV=local",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "pretest": "npm run build",
+    "test": "vitest run",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run typecheck && npm run format:check && npm test && npm run build",
+    "db:migrate:local": "wrangler d1 migrations apply tolvey-production --local",
+    "db:migrate:production": "wrangler d1 migrations apply tolvey-production --remote",
+    "db:seed:local": "wrangler d1 execute tolvey-production --local --file tests/fixtures/local-catalog.sql"
+  },
+  "dependencies": {
+    "hono": "4.13.11"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "5.20260930.1",
+    "@hono/vite-cloudflare-pages": "0.4.3",
+    "miniflare": "5.20260926.1-alpha",
+    "prettier": "3.9.9",
+    "typescript": "5.9.3",
+    "vite": "7.3.6",
+    "vitest": "4.1.11",
+    "wrangler": "4.144.0",
+    "@types/node": "^22.0.0"
+  }
+}

@@ -8,6 +8,8 @@ The build is divided into gated phases. One phase should normally be one focused
 ## Operating rule
 One session = one bounded objective = one verifiable artifact/state change.
 
+The latest explicit Phase 1 command (2026-09-30) defines **one complete PHASE 1 — FOUNDATION**. Session limits may split working sessions, not name new phases or reduce the Foundation Gate. It supersedes the audit's previous externally named subdivisions and the earlier storefront/operator scope for Phase 1.
+
 A session must end with:
 - implementation completed or explicitly blocked
 - tests run
@@ -41,8 +43,8 @@ Gate:
 - Read `README.md` and every one of the 16 files under `docs/`, including documents 13–16.
 - Git inventory: 17 tracked Markdown files; no additional remote branches appeared after fetch.
 
-### Current state
-Implemented artifacts are business and architecture documentation only: positioning, product hierarchy, commerce/channel principles, Money Kit hypothesis, security policy, testing/release requirements, provider-neutral transaction architecture, Duitku integration requirements, and phase gates.
+### Historical state at the Phase 0 snapshot
+Implemented artifacts were business and architecture documentation only: positioning, product hierarchy, commerce/channel principles, Money Kit hypothesis, security policy, testing/release requirements, provider-neutral transaction architecture, Duitku integration requirements, and phase gates.
 
 No executable application exists. `package.json`, `src/`, `public/`, `tests/`, `migrations/`, `wrangler.jsonc`, `wrangler.toml`, and `.gitignore` are absent. No canonical persisted catalog, storefront, operator console, checkout, payment adapter, fulfillment, analytics pipeline, or runtime storage binding exists. Documented entities and examples are specifications, not implemented records or working APIs.
 
@@ -58,7 +60,7 @@ These clarifications do not change the owned-product business model or introduce
 ### Gaps and risks
 | Priority | Gap / risk | Smallest safe next action |
 | --- | --- | --- |
-| Blocker | No runnable application/build artifact | Phase 1A shell and build configuration, not an audit-session demo |
+| Blocker | No runnable application/build artifact | Phase 1 shell and build configuration, not an audit-session demo |
 | High | No canonical persistent product/version/offer source | D1 migrations and integrity constraints; offer references an immutable version |
 | High | No protected operator mutation boundary | Select and verify minimal BYOK-compatible operator authentication before exposing writes |
 | High | Money Kit scope, buyer, price, and deliverable assets are unvalidated | Keep draft/unpublished; obtain actual operator-defined data, never fabricate sales or demand |
@@ -84,26 +86,51 @@ Phase 0 repository/architecture inspection is complete. The documented discrepan
 BYOK deployment is blocked by the absence of a deployable application. Creating a site merely to satisfy a deployment checkbox would cross into Phase 1 and violate this bounded audit scope. Existing Cloudflare projects and `tolvey.biz.id` remain unchanged by this session; their live state is not asserted.
 
 ### Recommended bounded build order
-1. **Next session — Phase 1A:** establish Hono + TypeScript + Cloudflare Pages shell, secret-safe ignore/environment configuration, and D1 Product/ProductVersion/Offer migrations with validation tests. Gate: clean build and migration/integrity tests pass; no payment or public operator mutations. This is a foundation sub-gate, not the complete Phase 1 gate.
-2. **Phase 1B:** persisted canonical catalog reads, validated offer publication, basic storefront, and authenticated operator foundation. Gate: canonical product/version can become a publishable offer; draft/archived records stay unsellable. First meaningful BYOK deploy follows build, tests, auth/resource review, and protected-route checks.
-3. **Phase 2:** provider-neutral transaction core with pending order references, idempotency, audit events, and concurrency-safe tests; test provider must be explicitly non-production.
-4. **Phase 3A–3D as needed:** official Duitku specification/config review; adapter; POP flow; callback verification/idempotency and sandbox end-to-end evidence. Stop if required account credentials are unavailable.
-5. **Phase 4:** real product assets, verified delivery, customer outcome, and truthful analytics.
-6. **Phases 5–7:** useful distribution only, operational hardening, then controlled production payment/fulfillment/recovery evidence.
-7. **Phase 8:** optimize only after real transaction evidence.
+Updated to follow the explicit Phase 1 execution command:
+1. **Phase 1:** complete executable foundation with TypeScript/Hono/Pages, safe environment configuration, D1 Product/ProductVersion/Offer schema/migrations, read-only catalog and health/readiness, real automated tests, clean install/build/runtime verification, documented evidence, and clean commit/push to main. No public mutations, checkout, payment, delivery, or speculative operator authentication.
+2. **Phase 2:** provider-neutral transaction core with pending order references, idempotency, audit events, and concurrency-safe tests; test provider must be explicitly non-production.
+3. **Phase 3:** official Duitku specification/config review; adapter; POP flow; callback verification/idempotency and sandbox end-to-end evidence. Use multiple bounded sessions as needed. Stop if required account credentials are unavailable.
+4. **Phase 4:** real product assets, verified delivery, customer outcome, and truthful analytics.
+5. **Phases 5–7:** useful distribution only, operational hardening, then controlled production payment/fulfillment/recovery evidence.
+6. **Phase 8:** optimize only after real transaction evidence.
 
 ## Phase 1 — Foundation
-Build:
-- application shell
-- environment configuration
-- product/offer model
-- canonical catalog
-- basic storefront
-- operator/admin foundation
-- Cloudflare-compatible project structure
+Current scope: the explicit Phase 1 command supersedes earlier storefront and operator UI/authentication requirements. There are no externally named subdivisions of Phase 1.
 
-Gate:
-- product can be created/read/published in canonical form
+Build:
+- TypeScript/Hono application runtime and Cloudflare Pages configuration
+- local/test/production environment and secret boundaries
+- D1 canonical Product, ProductVersion, Offer schema and migrations
+- health/readiness and minimal validated public read APIs
+- repository-safe configuration, explicit local-only fixtures where useful
+- deterministic monetary representation and relationship integrity
+- automated source/API/schema and compiled-runtime tests
+- clean install, typecheck, formatting, build, migration/runtime verification
+- documentation reconciliation and clean commit/push to main
+
+Foundation Gate:
+A clean dependency installation and fresh database must support build, migration initialization, tests, startup, health/readiness, and canonical persistence/read verification. Secrets must not be committed; Git must be committed, pushed, remote SHA verified, and clean. No Phase 2 implementation is permitted here.
+
+### Phase 1 implementation evidence — 2026-09-30
+- Baseline inspected: local/fetched main `25feb61f1f453df5b73922bb39886047317fa3d1`; no implementation existed before this session.
+- Runtime: Hono 4.13.11, TypeScript 5.9.3, Pages Worker build using Vite and Wrangler; application contains no Node runtime imports.
+- Persistence: `migrations/0001_canonical_catalog.sql`, three STRICT domain tables, FK/composite-FK/unique/CHECK constraints, lifecycle defaults, indexed read access. No transaction/customer/marketplace tables were added.
+- Offer price uses safe nonnegative integer minor units, explicit currency and exponent; IDR fixture 20000/exponent 0 and USD 1999/exponent 2 tested. Currency/exponent commerce policy and immutable version/publication write workflow remain future work.
+- Public read surface: `/health`, `/ready`, product/offer list and ID reads, bounded pagination, hidden draft/archived records, no private delivery/version metadata. Mutations return 405; no operator API exists.
+- Baseline security: Web Crypto UUIDv4 request IDs, parameterized SQL, controlled errors, security headers, logs without URL/query/payload/error text, ignored secrets/local state.
+- Tests: 59 source/API/local-D1 tests + 5 repository safety tests + 5 compiled-Worker/workerd tests = **69 passed**. Typecheck and configured Prettier passed. `npm ci` successfully installed the locked dependency tree; npm audit returned zero known vulnerabilities.
+- Build: `dist/_worker.js` approximately 30.24 kB plus routes/static assets. `npm test` builds first to ensure deployed-wrapper behavior is tested. The initial wrapper returned blank 200 for unknown routes; an explicit terminal 404 route and compiled-regression tests fixed this.
+- Migration verification: local and remote migrations succeeded; reruns reported no pending migrations. Workerd tests begin with fresh D1 and verify readiness fails before schema exists, succeeds after migration, and fails after simulated schema failure.
+- Local runtime: built Worker started through PM2/Wrangler on port 3000; health/readiness and persisted local product/offer fixtures verified. Browser status page loaded without console messages.
+- BYOK resources: created new `tolvey-production` D1 and `webapp-3` Pages project. Existing unrelated projects/databases were not modified. Live foundation URL: https://webapp-3-38j.pages.dev
+- Remote database: zero products, versions, and offers; FK check empty. No test fixtures were applied remotely. Live GET health/readiness/catalog/static endpoints passed; malformed ID 400, missing/unknown route 404, and POST/PUT/PATCH/DELETE 405 verified.
+- Configuration boundary: preview APP_ENV=staging explicitly has no D1 binding and fails closed. Optional remote staging provisioning was denied by the account D1 quota; no existing database was deleted and production was not reused for staging.
+- Toolchain note: initial npm 10 dependency resolver errors were resolved with npm 11 during installation; subsequent clean `npm ci` works with npm 10. The current Wrangler upstream dependency is Miniflare 5 alpha, pinned and tested using its exported legacy-config converter; do not upgrade without regression tests.
+- Git delivery: commit/push/remote-SHA/clean-tree evidence belongs to the final session report after execution; this documentation does not manufacture that evidence.
+
+Remaining outside Phase 1: remote staging provisioning (quota action), storefront/operator write controls when required, product content/validation, transactions, Duitku, fulfillment, distribution, analytics, commerce security hardening and production payment evidence. No production-commerce readiness is claimed.
+
+Next major phase only after the entire Foundation Gate and Git delivery pass: **Phase 2 — Transaction Core**, with provider-neutral persistence/state/idempotency tests. Stop this session without implementing it.
 
 ## Phase 2 — Transaction Core
 Build:
