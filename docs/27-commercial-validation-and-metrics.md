@@ -72,6 +72,12 @@ The strongest commercial claim requires evidence across payment and fulfillment,
 
 No metric should be presented as meaningful business success until the underlying event/state is actually implemented and verified.
 
+## Commercial architecture alignment
+
+Layer 0 provides free/discovery entry points. Layer 1 contains the repeatable digital-product catalog. Distribution is a cross-cutting channel layer. Layer 2 contains implementation/custom services.
+
+Commercial evidence should be attributable to product, offer, version, channel and transaction without making any channel-specific system the source of truth.
+
 ## Phase boundaries
 
 Phase 2 establishes transaction truth and operational events.
@@ -80,7 +86,7 @@ Phase 3 adds Duitku provider execution.
 
 Phase 4 connects product-to-commerce presentation and direct purchase experience.
 
-Phase 5 adds distribution channels.
+Phase 5 adds distribution channels across the canonical product model. Channel listings remain derived representations; they must not fork product truth.
 
 Later phases may add richer analytics only when real transaction volume justifies it.
 
