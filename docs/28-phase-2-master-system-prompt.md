@@ -38,6 +38,16 @@ Before changing code, inspect and follow the current repository documentation, e
 - `docs/25-deployment-environments-domains.md`
 - `docs/26-presentation-and-submission-brief.md`
 - `docs/27-commercial-validation-and-metrics.md`
+- `docs/29-digital-product-architecture.md`
+- `docs/30-digital-product-catalog-v1.md`
+- `docs/31-free-and-funnel-product-strategy.md`
+- `docs/32-distribution-layer-architecture.md`
+- `docs/33-layer-2-service-architecture.md`
+- `docs/34-commercial-architecture-master.md`
+- `docs/35-product-catalog-schema.md`
+- `docs/36-product-validation-and-launch-gates.md`
+- `docs/37-marketplace-listing-standard.md`
+- `docs/38-distribution-operations-and-attribution.md`
 
 The latest repository state is authoritative over stale prompts or assumptions.
 
@@ -57,6 +67,12 @@ Preserve:
 - current tests and migration discipline.
 
 Do not rebuild Phase 1 unnecessarily.
+
+## Commercial architecture boundary
+
+The newly documented commercial layers do not expand Phase 2 scope. Phase 2 remains provider-neutral transaction infrastructure. It must, however, preserve the canonical relationships established by the commercial architecture: Offer → immutable ProductVersion, source channel attribution, and transaction records that can later support Layer 0/Layer 1 commerce without embedding marketplace-specific logic.
+
+Phase 2 must not implement product catalog expansion, free-product funnel logic, channel adapters, marketplace listings, or Layer 2 service fulfillment.
 
 ## Phase 2 objective
 
