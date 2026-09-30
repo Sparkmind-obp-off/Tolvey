@@ -1,8 +1,12 @@
 # TOLVEY — Roadmap & Decision Log
 
-## Phase 0 — Foundation
+## Roadmap numbering clarification — 2026-09-30
 
-Status: current.
+The phases below are business milestones, not engineering session gates. For engineering execution, use `docs/15-genspark-build-phases.md` and `docs/16-master-system-prompt-genspark.md`: Phase 0 is audit, Phase 1 is foundation, and Phase 2 is transaction core. Do not interpret the business roadmap as permission to skip these gates.
+
+## Business milestone 0 — Foundation
+
+Status: documentation established; no application implementation exists at the audited main snapshot (832e4a4). Domain acquisition below is a repository assertion, not independently verified deployment evidence.
 
 - Brand locked operationally
 - Domain acquired: tolvey.biz.id
@@ -10,7 +14,7 @@ Status: current.
 - Repository created
 - Architecture documentation established
 
-## Phase 1 — Product proof
+## Business milestone 1 — Product proof
 
 - Define Money Kit v1
 - Validate target buyer/problem
@@ -19,7 +23,7 @@ Status: current.
 - Establish payment and delivery path
 - Make first real transactions
 
-## Phase 2 — Distribution proof
+## Business milestone 2 — Distribution proof
 
 - Select relevant established marketplaces
 - Establish social distribution workflow
@@ -27,7 +31,7 @@ Status: current.
 - Measure channel performance
 - Reduce repetitive manual work
 
-## Phase 3 — Commerce operating system
+## Business milestone 3 — Commerce operating system
 
 - unified catalog
 - order normalization
@@ -36,7 +40,7 @@ Status: current.
 - operator dashboard
 - product analytics
 
-## Phase 4 — Scale
+## Business milestone 4 — Scale
 
 Only after evidence: automation, subscriptions, bundles, affiliates, additional product families, broader marketplace integrations, and deeper customer lifecycle tooling.
 
