@@ -32,6 +32,16 @@ Collect only data required for fulfillment, support, transaction records, consen
 
 Treat every marketplace/social/payment integration as an untrusted boundary. Verify webhook signatures where supported, validate payloads, rate-limit endpoints, avoid logging tokens, store external IDs safely, and handle duplicate events idempotently.
 
+## Phase 2 checkpoint security boundary — 2026-09-30
+
+The transaction checkpoint is non-production-only and disabled by default. Enabling it requires explicit APP_ENV, D1, `TRANSACTION_CORE_ENABLED=true`, and a private random `TRANSACTION_CORE_TOKEN` (32–256 characters) in ignored local configuration/approved server-side secret storage. A hashed fixed-length comparison validates bearer credentials; credentials never appear in browser code, API DTOs, normal logs or commits.
+
+This is one trusted internal service principal authorizing checkpoint creation/reads, not customer login, multi-tenant/record ownership auth, or Hosted route admission. Production is rejected even with flag/token; no public admin or arbitrary payment-confirmation mutation exists. Public transaction access/rate-limiting policy remains mandatory before exposure in a later release.
+
+Inputs are bounded/validated: 2048-byte streamed JSON, UUIDs, integer quantity 1–100, source label, optional opaque customer UUID, idempotency key. Unknown fields including client money/status are rejected. Money is selected/calculated from active canonical rows at write time. Customer email/contact, raw provider payload and consent collection are not implemented.
+
+Snapshots/version-content and append-only audit are enforced in D1. Events contain safe identifiers/state/duplicate context, not sensitive payloads. These are baseline controls, not a complete security/recovery audit or verified provider/callback implementation.
+
 ## Incident response
 
 For a suspected credential leak: disable/rotate credential; inspect affected scope; invalidate sessions/tokens where possible; inspect logs; document incident; restore minimum required access; record remediation.

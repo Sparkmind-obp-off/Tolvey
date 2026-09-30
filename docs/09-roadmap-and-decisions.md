@@ -70,6 +70,15 @@ Affected documents: README and docs/02, 09, 11, 12, 15, 16.
 Security boundary: public mutations are denied; local/test never use remote production. Optional remote staging creation hit D1 quota; preview deliberately has no DB binding rather than sharing production.
 Money policy: Offer owns sale-price truth, stored as safe integer minor units with explicit currency/exponent. IDR uses whole-rupiah exponent 0 in test fixtures; production has no product/price records.
 
+### D-006 — Phase 2 durable checkout checkpoint, non-production boundary (2026-09-30)
+Decision: one coherent checkpoint inside the existing Phase 2 gate; do not declare Phase 2 complete or enter Phase 3.
+Context: main `1b73d3b` contains the complete commercial/system docs but only Phase 1 executable functionality. The new checkpoint persists checkout/pending order/blocked fulfillment/events atomically and adds provider-neutral schema/contracts without a provider.
+Reason: prove canonical immutable purchase truth, retries and concurrency before extending payment/fulfillment execution. Server-authoritative SQL snapshots and referenced-version immutability preserve the commercial architecture without catalog expansion.
+Security trade-off: a feature-flagged, private single-service bearer boundary is genuinely required for the new internal create/status operations; it is non-production only and is not customer auth, an unrestricted admin API, or Hosted route admission. Production access/rate-limiting/record-authorization/full-lifecycle release review remain mandatory.
+Deployment decision: preserve the existing Phase 1 Pages project and remote schema; no checkpoint deploy or random replacement identity. Account project `tolvey` is absent (404), not proof of global hostname availability.
+Evidence: 109 passing tests, local fresh/upgrade migrations and runtime create/replay/authorization checks. No confirmed payment or completed delivery is claimed.
+Affected documents: README, docs/00, 02, 07, 09, 12, 13, 15, 21, 22, 23, 25, 26. This does not change the owned-product/no-marketplace model.
+
 ## Change rule
 
 Any change to brand, business model, or core architecture requires a written decision with context, evidence, decision, trade-offs, affected documents, and date.

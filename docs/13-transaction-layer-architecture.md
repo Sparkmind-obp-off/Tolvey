@@ -201,6 +201,30 @@ Emit events such as:
 
 Every event should carry correlation IDs and safe references.
 
+## Implemented Phase 2 checkpoint — 2026-09-30
+
+Status: **Implemented + locally Verified; Phase 2 IN PROGRESS**, not end-to-end commerce.
+
+Migration 0002 adds `checkout_sessions`, `orders`, `payments`, `fulfillments`, and append-only `transaction_events`. Payment and fulfillment execution are not implemented by the presence of these tables.
+
+Implemented flow:
+`active canonical Offer/Product/ProductVersion → immutable CheckoutSession → pending Order → BLOCKED Fulfillment + creation audit`.
+
+- One D1 batch inserts checkout, order, blocked fulfillment and two creation events atomically. No payment row or confirmation/revenue event is manufactured.
+- Monetary values are selected/calculated from canonical records at SQL write time. Input is offer UUID, quantity 1–100, source label, optional opaque customer UUID; client totals/currency/status/private delivery fields are rejected.
+- Session lifetime is fixed at 30 minutes. Expiration timestamp is durable and cannot be extended by retry. Automatic expiration/status reconciliation remains to be implemented; returning an existing snapshot is not permission to initiate payment after expiry.
+- UUID identities and stable `TV-<UUID hex>` transaction reference precede provider initiation. Snapshots preserve price, currency/exponent, quantity, names, version label and private delivery reference even if catalog price/name later changes.
+- Referenced version identity/content is immutable after first checkout; lifecycle archival remains allowed. Composite relationships prevent mismatched offer/product/version. Use a new offer to change the version once the old offer is referenced.
+- `checkout.create:v1` operation scope plus SHA-256 idempotency key/request hashes; same key/meaning returns the same order; changed meaning returns 409. Keys are scoped to a single trusted internal service, not customer or marketplace tenants.
+- Concurrent checkout creation uses uniqueness and `ON CONFLICT DO NOTHING`; the winning snapshot is retrieved after commit. Failure anywhere in the batch rolls all creation side effects back.
+- Events record state, original correlation ID, current request ID and duplicate marker. Replays are deduplicated by request ID; creation events are not repeated. Audit is not a financial ledger.
+- Schema defense in depth: one order/session and fulfillment/order, one live payment attempt/order, unique provider/reference, payment/order money composite FK, one payment.confirmed event/order, immutable snapshots, append-only events, legal order-state graph/status checks, and a barrier against unpaid fulfillment.
+- `assertTransition` and `PaymentAdapter`/`VerifiedPaymentSignal` declare provider-neutral contracts. No provider implementation, signal-ingestion service, or arbitrary state-transition API exists yet. SQL constraints do not verify a real provider signal.
+
+Verification: 40 checkpoint tests on real local D1 and compiled workerd plus the unchanged 69 Phase 1 tests passed (109 total). Includes 12 concurrent identical requests, concurrent conflicting meaning, injected batch failure/retry, immutable snapshots, integer-money boundaries, FK checks, schema dedup constraints, protected API failures, and client-money rejection. Local Wrangler creation/replay/status reads were observed with a temporary ignored service credential; payments remained PENDING and fulfillment BLOCKED.
+
+Remaining required Phase 2 gate: persistent payment initiation/verified-signal handling, atomic cross-entity transitions, expiration/cancellation, fulfillment authorization/retry/completion, refund operations where required, full test-provider lifecycle, duplicate callback/revenue/concurrent-transition tests, and release/deployment identity handling. No actual payment/delivery is claimed and no real provider was connected.
+
 ## Architecture rule
 TOLVEY owns the canonical transaction model.
 Duitku owns payment execution.

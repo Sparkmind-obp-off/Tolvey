@@ -10,6 +10,8 @@ import {
   verifySchema,
 } from './catalog';
 import type { AppContext } from './types';
+import transactionRoutes, { coreAvailable } from './transaction-api';
+import { verifyTransactionSchema } from './transaction-store';
 
 const app = new Hono<AppContext>();
 
@@ -47,7 +49,9 @@ app.use('*', async (c, next) => {
 });
 
 app.use('*', async (c, next) => {
-  if (!['GET', 'HEAD', 'OPTIONS'].includes(c.req.method)) {
+  const isCheckoutWrite =
+    c.req.method === 'POST' && c.req.path === '/api/transaction-core/checkouts';
+  if (!['GET', 'HEAD', 'OPTIONS'].includes(c.req.method) && !isCheckoutWrite) {
     c.header('Allow', 'GET, HEAD, OPTIONS');
     return c.json(
       { error: 'METHOD_NOT_ALLOWED', request_id: c.get('requestId') },
@@ -71,6 +75,14 @@ app.get('/ready', async (c) => {
   }
   try {
     await verifySchema(c.env.DB);
+    if (c.env.TRANSACTION_CORE_ENABLED === 'true') {
+      if (!coreAvailable(c.env))
+        return c.json(
+          { status: 'not_ready', request_id: c.get('requestId') },
+          503,
+        );
+      await verifyTransactionSchema(c.env.DB);
+    }
     return c.json({ status: 'ready' });
   } catch {
     console.error(
@@ -92,6 +104,8 @@ app.use('/api/*', async (c, next) => {
   }
   await next();
 });
+
+app.route('/api/transaction-core', transactionRoutes);
 
 for (const resource of ['products', 'offers'] as const) {
   app.get(`/api/${resource}`, async (c) => {

@@ -81,4 +81,6 @@ Every integration must have:
 ## 10. Current integrations
 Phase 1: Cloudflare Pages/Workers + D1 foundation.
 
-Duitku and other commerce integrations are not yet implemented.
+Phase 2 checkpoint adds a provider-neutral TypeScript `PaymentAdapter` contract (`initiate`, `verifyNotification`) and normalized `VerifiedPaymentSignal` type. There is no implementation or runtime provider call, and no callback HTTP route. Later core processing must still validate expected provider/reference/amount and deduplicate authenticated signals before changing financial truth.
+
+Payment/fulfillment services and test-provider end-to-end execution remain unfinished inside Phase 2. Duitku and other commerce integrations are not implemented. Schema-only pending payment fixtures in isolated tests are constraint evidence, not successful transactions.

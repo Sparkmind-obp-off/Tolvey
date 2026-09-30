@@ -8,7 +8,39 @@ One canonical product source -> many commerce/distribution channels -> one norma
 
 Demand -> Product -> Package -> Publish -> Distribute -> Sell -> Deliver -> Measure -> Learn -> Improve.
 
-## Current implementation — PHASE 1 — FOUNDATION
+## Current delivery — PHASE 2 — TRANSACTION CORE — IN PROGRESS
+
+This is a coherent execution checkpoint, **not Phase 2 completion**. Baseline main was fast-forwarded to `1b73d3bb16192a1b5d381237904cf62e7624ce49` and the latest commercial/system documentation was inspected before coding.
+
+Implemented and verified locally:
+- New immutable migration `0002_transaction_core.sql`: CheckoutSession, Order, Payment, Fulfillment, transaction events, integrity/uniqueness constraints, immutable purchase snapshots, append-only audit, and guarded order-state graph.
+- Atomic checkout + pending order + BLOCKED fulfillment + two creation events using one D1 batch. No Payment is invented during checkout.
+- Amount/currency/version/name/delivery snapshots are read and calculated from active canonical records **at write time**. Quantity is 1–100, multiplication bounded using exact BigInt division and SQL integer constraints. Client totals/currency/status are rejected.
+- Hashed operation-scoped idempotency key plus normalized request hash; retries return the existing result, conflicting meaning returns 409. Twelve concurrent identical attempts were tested with one winner; injected batch failure rolled everything back and retry succeeded.
+- Referenced version identity/content and checkout/order snapshots are frozen. Future price/name changes cannot rewrite an existing purchase. Referenced offers cannot be repointed to another version; use a new offer instead.
+- Provider-neutral TypeScript adapter contract and legal transition validator. These are not a provider implementation or complete persistent lifecycle service.
+- Protected **non-production only** internal API (below), feature-flagged off by default. Production is explicitly rejected even if the flag/token are present. No public checkout, payment-confirmation endpoint, or operator catalog API exists.
+- 109 passing automated tests: the unchanged 69 Phase 1 tests plus 40 checkpoint tests against real D1/workerd. Typecheck/format/build pass; Worker approximately 39.81 kB. Local upgrade and fresh migrations pass; reapplication is a no-op.
+
+Still required inside Phase 2: atomic payment initiation/status-signal processing; full cross-entity compare-and-swap lifecycle orchestration; expiry/cancellation; fulfillment authorization/retry/completion; refund representation operations; duplicate callback/revenue/concurrent-transition tests; full test-only end-to-end lifecycle; production release gate and deployment identity resolution. Schema constraints are defense in depth, not proof those services exist. Timestamps include expiration, but expiration is not yet processed automatically. No real payment/delivery is claimed.
+
+### Internal checkpoint API
+
+Non-production requires a D1 binding, `TRANSACTION_CORE_ENABLED=true`, and a private random `TRANSACTION_CORE_TOKEN` of 32–256 characters in ignored `.dev.vars` or approved server-side secret storage. Call with `Authorization: Bearer <server-only token>`. Do not put this token into a customer browser. This is one internal service principal, not customer authentication, multi-tenant authorization, or Hosted route admission.
+
+- `POST /api/transaction-core/checkouts`: `Idempotency-Key` required (16–128 ASCII letters/digits/`._:-`); JSON body only `offer_id`, integer `quantity`, bounded `source_channel`, optional opaque UUID `customer_reference`. Maximum body 2048 bytes. Source is an attribution label supplied by the trusted service, not a verified marketplace identity. No PII is collected.
+- Successful create: 201 `{ data: { checkout, order, replayed: false } }`; matching retry: 200 with `replayed: true`; changed payload with the same key: 409.
+- `GET /api/transaction-core/checkouts/:id` and `GET /api/transaction-core/orders/:id`: protected safe DTOs, no private delivery/customer reference, idempotency key/hash, or version metadata.
+- Disabled/incomplete/production configuration: 503; bad/missing authorization: 401; malformed input: 400; missing/inactive offer: 404; oversized body: 413; generic unexpected error: 500. Errors include `error`, safe `message`, and request ID.
+- `/ready` additionally probes transaction tables when the flag is enabled; default foundation readiness and catalog contracts remain unchanged.
+
+The internal credential authorizes all checkpoint records; this is intentionally **not a production/customer access policy**. No public transaction rate limiter is implemented. Public exposure is forbidden until authorization/rate limits, full lifecycle, and release gates are reviewed. Current response snapshots do not imply payment or product delivery.
+
+### Checkpoint deployment state
+
+No remote migration, deploy, project creation, secret update, or DNS change was performed for this partial checkpoint. Existing BYOK production remains Phase 1 at `efd5d7d8408646f04e0a72afd52849ba6b550a07` on https://webapp-3-38j.pages.dev. Pages audit confirmed main branch, production DB binding, and no preview DB binding. Project `tolvey` returns 404 **in this account**; global `tolvey.pages.dev` availability/allocation is not verified, and canonical identity has not been achieved. Preserve the existing project until a deliberate release/identity decision; never use a random new production hostname or production D1 for staging.
+
+## Verified foundation — PHASE 1 — FOUNDATION
 
 Implemented and verified on 2026-09-30:
 - TypeScript/Hono runtime built for Cloudflare Pages advanced-mode Worker, without Node APIs in application code.
@@ -20,7 +52,7 @@ Implemented and verified on 2026-09-30:
 - 69 automated tests including real local D1 and the compiled Worker running on workerd.
 - BYOK deployment with schema verified in remote D1. Production contains zero catalog records, no fixtures or transactions.
 
-Not implemented: product-family/asset tables, operator/admin API or authentication, storefront purchase experience, checkout, orders, payments, Duitku, fulfillment, distribution integrations, analytics/events, or customer workflows. No customer can purchase through this foundation. No marketplace/seller infrastructure exists. Full commerce production readiness has not been established.
+Not implemented in Phase 1: product-family/asset tables, operator/admin API or authentication, storefront purchase experience, checkout, orders, payments, Duitku, fulfillment, distribution integrations, analytics/events, or customer workflows. The Phase 2 checkpoint above adds limited non-production transaction persistence/reads only. No customer can purchase through this foundation. No marketplace/seller infrastructure exists. Full commerce production readiness has not been established.
 
 Phase 0 is preserved in [the audit](docs/15-genspark-build-phases.md), committed at `25feb61f1f453df5b73922bb39886047317fa3d1`. The latest explicit Phase 1 command supersedes the previous storefront/operator requirements and externally named subdivisions: this is **one Phase 1**, with no public mutation surface.
 
@@ -42,7 +74,7 @@ Phase 0 is preserved in [the audit](docs/15-genspark-build-phases.md), committed
 | `GET /api/offers/:id` | Public offer DTO, no delivery reference or version metadata |
 | `GET /static/style.css` | Public static CSS |
 
-Lists return `{ "data": [], "next_cursor": null }` when no active records exist. Single-record responses use `{ "data": {...} }`. Unknown application/API routes return JSON 404; invalid queries return 400. Application mutation methods return 405 with an Allow header. HEAD is bodyless; OPTIONS returns 204 without permissive CORS. Static asset handling is managed by Pages, not a public database mutation path.
+Lists return `{ "data": [], "next_cursor": null }` when no active records exist. Single-record responses use `{ "data": {...} }`. Unknown application/API routes return JSON 404; invalid queries return 400. Application mutation methods return 405 with an Allow header, except the explicitly protected non-production transaction checkpoint create route described above. HEAD is bodyless; OPTIONS returns 204 without permissive CORS. Static asset handling is managed by Pages, not a public database mutation path.
 
 ## Local development / Foundation Gate
 
@@ -83,7 +115,7 @@ Without the seed, a freshly migrated local DB is ready and returns empty catalog
 
 Tables use SQLite STRICT typing, CHECK constraints, indexed public reads, and restrictive foreign-key deletes. The default status is DRAFT. Only Offer owns sale price. `price_minor` is a nonnegative integer <= `Number.MAX_SAFE_INTEGER`; there are no float monetary columns. The fixture's 20000 IDR uses exponent 0 (whole rupiah); 1999 USD with exponent 2 represents USD 19.99. Exponent is explicit, not inferred by the browser. Currency format is three uppercase letters; permitted currency/exponent business policy must be established before checkout is added.
 
-Delivery reference stores an opaque future configuration identifier, **not a signed URL, token, or delivery implementation**. Neither it nor private version metadata is exposed publicly. Product families, assets and transaction entities remain planned, not speculative extra tables. UUIDs can be generated with Web Crypto `crypto.randomUUID()`. Trusted operator SQL must use valid UUIDv4 IDs and update `updated_at` when editing; this phase has no write service, publication workflow, or version-immutability enforcement.
+Delivery reference stores an opaque future configuration identifier, **not a signed URL, token, or delivery implementation**. Neither it nor private version metadata is exposed publicly. Product families and assets remain planned; transaction entities are now introduced by migration 0002 for the non-production Phase 2 checkpoint. UUIDs can be generated with Web Crypto `crypto.randomUUID()`. Trusted operator SQL must use valid UUIDv4 IDs and update `updated_at` when editing; Phase 1 had no write service, publication workflow, or version-immutability enforcement; Phase 2 now freezes versions once checkout references exist, without adding a catalog publication service.
 
 ## Environment and deployment boundaries
 
@@ -94,7 +126,7 @@ Delivery reference stores an opaque future configuration identifier, **not a sig
 
 `wrangler.jsonc` contains a non-secret database ID, not credentials. BYOK tokens belong in approved account/environment secret storage, never this repository. `.gitignore` excludes credentials, private keys, local databases, dependencies, logs, and generated output. Do not place secrets into SQL, product metadata, fixtures, or static assets.
 
-Production operations require a valid BYOK token loaded securely and D1/Pages permissions:
+Production operations require a valid BYOK token loaded securely and D1/Pages permissions. **The sequence below is the historical Phase 1 deployment procedure, not approval to release the partial Phase 2 checkpoint. Do not apply migration 0002 remotely or deploy this checkpoint before its release review and docs/25 identity decision.**
 
 ```sh
 # Explicit remote schema operation; never run local test fixtures remotely.
@@ -115,4 +147,4 @@ Commerce E2E, Duitku/provider tests, recovery/rollback rehearsal, full access-co
 
 ## Next major phase
 
-Only after final Foundation Gate/Git delivery passes: **PHASE 2 — TRANSACTION CORE**, starting with provider-neutral transaction persistence, state transitions and idempotency tests. No Phase 2 code was implemented here. Remote staging remains an operational prerequisite to address before provider sandbox work; do not delete unrelated databases without explicit approval.
+Continue **PHASE 2 — TRANSACTION CORE** from this verified checkpoint. Next bounded execution objective: atomic provider-neutral payment/state transition orchestration with idempotency, authoritative signal checks, expiry/cancellation handling, and concurrency tests. Do not add Duitku or real delivery. Phase 2 remains incomplete until its full lifecycle/security/release gate passes. Remote staging remains an operational prerequisite to address before provider sandbox work; do not delete unrelated databases without explicit approval.

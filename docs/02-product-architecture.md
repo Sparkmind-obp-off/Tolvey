@@ -42,6 +42,10 @@ The wider product specification should eventually include product_id, family, na
 
 This is the minimal canonical data foundation, not the complete wider product record. Product families/assets, immutable version publication rules, demand evidence, operator mutation/authentication, real Money Kit content, and delivery remain planned. Test fixtures are not commercial evidence.
 
+## Phase 2 snapshot boundary — 2026-09-30
+
+The locally verified transaction checkpoint freezes ProductVersion identity/content after first checkout references it, while allowing lifecycle archival. Checkout/order purchase snapshots preserve version label, price/currency/exponent, product/offer names and private delivery reference. Referenced offers cannot be repointed to another version; create a new offer. This does not expand the product catalog or implement a full publication/version-release workflow.
+
 ## Product principles
 
 - Sell outcomes, not feature piles.

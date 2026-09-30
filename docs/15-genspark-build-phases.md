@@ -146,6 +146,27 @@ Build:
 Gate:
 - a test order can move safely through checkout/payment/fulfillment states without a provider
 
+### Phase 2 execution checkpoint — 2026-09-30
+
+Status: **in progress**, not Phase 2 completion. There are no externally named subdivisions.
+
+Purpose: preserve the audited Phase 1 runtime and latest commercial architecture while establishing durable atomic checkout/pending-order truth and a controlled non-production read/write boundary.
+
+Implemented/verified:
+- New migration 0002: CheckoutSession, Order, Payment, Fulfillment, append-only events, immutable snapshot/version barriers, FK/money/state/unique/index constraints.
+- One atomic checkout/order/blocked-fulfillment/audit creation batch, server-authoritative price/currency at write time, SHA-256 idempotency/request fingerprints, safe replay/conflict behavior.
+- Provider-neutral adapter interface/state graph; no provider or privileged state-transition HTTP implementation.
+- Feature-flagged internal checkout/order API with private service bearer credential, request/body/input constraints and generic errors. Production is explicitly disabled; no customer auth/public checkout is claimed.
+- 109 tests passed: unchanged 69 Phase 1 + 40 real D1/workerd checkpoint tests. Includes 12 concurrent same-key requests, conflicting payload concurrency, fault/rollback/retry, snapshots, schema dedup/FKs/integer precision, protected compiled APIs, and invalid states.
+- Typecheck/format/build passed (Worker approximately 39.81 kB). Local upgrade/fresh Wrangler migration and reruns passed; FK check empty. Local runtime create 201, replay 200, pending-order read 200, unauthorized 401 observed with an ephemeral ignored local credential. No confirmed payment or completed delivery created.
+- Read-only Pages audit: existing `webapp-3`/`webapp-3-38j.pages.dev`, main, Phase 1 commit efd5d7d; production DB, no preview DB. `tolvey` absent in this account (404), global availability not proven. Existing deployment, remote schema, bindings, secrets and DNS unchanged.
+
+Remaining mandatory Phase 2 work: payment initiation/signal processing, complete atomic cross-entity transitions, expiry/cancellation, fulfillment authorization/retry/completion, refund operations, test-provider full lifecycle, callback/revenue/concurrent-transition/failure regressions, production release and canonical identity handling. Timestamp/enum/uniqueness constraints do not prove those services exist. Schema supports them; no success is fabricated.
+
+Next bounded execution session remains **PHASE 2**: implement atomic provider-neutral payment transition/orchestration with expected-reference/amount checks, idempotency and concurrency tests plus expiry/cancellation handling. Do not implement Duitku or real delivery. Release/deploy only after the appropriate gate review; do not attach production D1 to preview or create another unrelated Pages project.
+
+Git commit/push/clean-state evidence is reported after execution in the final session report. This checkpoint is not an authorization to enter Phase 3.
+
 ## Phase 3 — Duitku POP
 Build:
 - Duitku provider adapter

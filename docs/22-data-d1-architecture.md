@@ -29,15 +29,22 @@ Version/revision of a product.
 ### offers
 Commercial offer and authoritative sale price.
 
-## 4. Phase 2 planned transaction tables
-- checkout_sessions
-- orders
-- payments
-- fulfillments
-- idempotency records where needed
-- transaction/audit events
+## 4. Phase 2 checkpoint schema — implemented, locally verified
 
-The exact schema must be designed with atomic transition and retry behavior, not merely copied from the conceptual architecture.
+Immutable ordered migration `0002_transaction_core.sql` adds:
+- `checkout_sessions`: scoped idempotency-key hash + request hash, canonical FKs, authoritative immutable purchase snapshot, quantity, explicit money/currency/exponent, source label, nullable opaque customer UUID, correlation ID, fixed creation/expiry, lifecycle.
+- `orders`: unique checkout reference, stable provider-neutral reference, immutable purchase snapshot, lifecycle/payment/fulfillment statuses, timestamps and safe failure-code slot.
+- `payments`: provider-neutral attempt/reference, authoritative money FK to order, normalized status/timestamps/failure code, unique operation/order and provider/reference, one live/confirmed attempt per order. No raw payload stored.
+- `fulfillments`: one/order, type and private delivery reference, status/timestamps/failure code. Creation placeholder is DIGITAL/BLOCKED, not a delivery execution or Layer 2 service workflow.
+- `transaction_events`: append-only audit, kind/dedup/state/correlation/request/duplicate/timestamp. Unique business-event constraints are not a separate financial ledger.
+
+CHECK/FK/unique/index/trigger constraints protect matched offer/product/version, money bounds, snapshot consistency, referenced version content, immutable order/session snapshots, legal order-state/status combinations, unpaid fulfillment, and event append-only/dedup. Offer price/name may change later without rewriting a purchase; referenced offer version cannot be repointed. ProductVersion archival is allowed, identity/content edits after checkout are not.
+
+Creation uses one D1 batch and SQL `INSERT ... SELECT` from active parents at write time. Quantity 1–100, exact integer total, BigInt-derived safe bound. The key/request fingerprints live in the checkout record; a separate idempotency table is not required for this operation. Same-key concurrent losers retrieve the winner; mismatched request hash returns conflict. No payment record is generated just to claim architecture completion.
+
+Verified fresh migrations and upgrade over existing Phase 1 fixture catalog in real workerd D1; Wrangler local upgrade and rerun; FK check empty. **Migration 0002 has NOT been applied remotely.** Existing migration 0001 is unchanged. Explicit statement-breakpoint comments delimit complete trigger statements in the test harness; production SQL still runs through Wrangler migration tooling.
+
+The full state/signal/fulfillment orchestration is still planned. Schema constraints alone do not authenticate callbacks, synchronize every entity on a transition, process expiry, or deliver products. Customer UUID is opaque/non-PII; contact/customer identity/consent/retention collection is out of this checkpoint. Transaction/audit records have no destructive rollback/delete workflow.
 
 ## 5. Integrity
 Use:

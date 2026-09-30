@@ -4,6 +4,8 @@ export type AppEnvironment = 'local' | 'test' | 'staging' | 'production';
 export type Bindings = {
   DB?: D1Database;
   APP_ENV?: string;
+  TRANSACTION_CORE_ENABLED?: string;
+  TRANSACTION_CORE_TOKEN?: string;
 };
 
 export type AppContext = {

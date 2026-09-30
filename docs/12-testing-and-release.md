@@ -51,6 +51,21 @@ The initial build-wrapper 404 bug was found during deployed verification, fixed 
 
 Not executed/implemented: checkout/payment/Duitku tests, commerce E2E, delivery/analytics tests, full security audit, recovery rehearsal, or controlled real customer transactions. Remote staging D1 provisioning failed due to account quota; preview intentionally has no DB and cannot share production. No optional staging readiness claim is made.
 
+## Phase 2 checkpoint verification — 2026-09-30
+
+Status: complete checkpoint verification, **not complete Phase 2 gate**.
+
+- `npm run check`: typecheck + configured Prettier + build + 109 passing tests.
+- 69 existing Phase 1 tests remain unchanged/green; 40 added transaction tests exercise actual D1 and compiled workerd.
+- Verified: atomic checkout/pending order/BLOCKED fulfillment/event creation, 12 concurrent retries with one winner, conflicting-key meaning, transient fault rollback/retry, preserved immutable snapshots, amount overflow/safe boundary/USD precision, foreign keys, state/status and unpaid-fulfillment guard, append-only/replay/event uniqueness, one live payment schema constraint, token/config/production denial, bounded bodies, generic errors and absent privileged transition routes.
+- New migration 0002 applies as a local upgrade over existing Phase 1 catalog and in fresh credential-free local Wrangler state; reruns are no-ops; FK check returns empty. Migration 0001 is unchanged.
+- Local runtime observed create 201, replay 200, protected pending-order read 200, unauthenticated 401, ready 200 with ephemeral ignored local credential. No real or simulated successful payment is claimed by those requests.
+- Build approximately 39.81 kB; npm audit zero known vulnerabilities at verification time.
+
+Missing required Phase 2 verification: persistent full lifecycle, callback processing/idempotent confirmation, cancellation/expiry, failure/retry after payment, exactly-once operational fulfillment, refund flow, duplicate revenue under complete transition scenarios, and release/deployment identity gate. Schema-only test inserts are constraint tests, not provider confirmation or business evidence.
+
+No new remote deployment/migration was performed. Production Phase 1 stays intact. Test credentials are ephemeral and never committed; final source/build/history/log hygiene and Git delivery evidence are recorded in the session report. Do not release this checkpoint as customer commerce.
+
 ## Foundation rollback guidance (not a rehearsed commerce rollback)
 
 Redeploy a previously verified Pages artifact/commit compatible with the existing schema. Do not delete D1 or reverse migrations destructively to roll back an HTTP deployment. Phase 0 had no executable artifact, so it is not an application rollback target. This additive initial schema has no transaction records; future schema changes need compatible rollout and recovery plans. A rollback/recovery rehearsal remains required before commerce production validation.

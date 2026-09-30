@@ -1,2 +1,6 @@
 # Local only. Copy to .dev.vars; never put real secrets in this example.
 APP_ENV=local
+# Transaction checkpoint is disabled by default and forbidden in production.
+TRANSACTION_CORE_ENABLED=false
+# To test locally, generate a private random 32–256 character token in ignored .dev.vars.
+# Never embed the token in browser code or copy it into this example.

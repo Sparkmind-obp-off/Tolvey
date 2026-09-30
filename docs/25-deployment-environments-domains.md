@@ -78,6 +78,18 @@ Before changing DNS:
 - verify application response
 - preserve rollback information
 
+## Phase 2 checkpoint deployment audit — 2026-09-30
+
+Read-only BYOK account inspection verified:
+- Existing project: `webapp-3`, assigned `webapp-3-38j.pages.dev`, production branch main.
+- Latest production source: `efd5d7d8408646f04e0a72afd52849ba6b550a07` (Phase 1).
+- Production binding names: DB; APP_ENV variable. Preview has no D1 binding.
+- GET for project `tolvey` in this account returns 404. This only proves account absence, **not global `tolvey.pages.dev` availability** or successful canonical allocation.
+
+The Phase 2 execution checkpoint is partial and non-production only. No remote migration/deploy/project creation/binding/secret/DNS mutation occurred. Existing production is deliberately preserved; no unrelated/random project is created and no canonical identity is falsely claimed.
+
+Pending release work: deliberately verify allocation/migration of the target identity before production deployment. If exact `tolvey.pages.dev` is unavailable, report the actual allocation error and stop that identity change, preserving the existing project. Do not suffix-generate a substitute production identity. `tolvey.biz.id` attachment remains unperformed/unverified. Staging quota remains a known operational concern from Phase 1, not a reason to share production D1.
+
 ## 9. Production gate
 A deployment is not a commerce launch.
 

@@ -58,6 +58,13 @@ Phase 1 Foundation Gate:
 
 This is technical foundation evidence, not evidence of commercial success.
 
+Phase 2 execution checkpoint (2026-09-30), **in progress**:
+- Implemented + locally Verified: durable schema, atomic checkout/pending order, immutable snapshots, idempotency/audit, and a feature-flagged protected internal non-production API.
+- Verified: 109 automated tests (69 Phase 1 regressions + 40 checkpoint tests), typecheck/format/build, local upgrade/fresh migrations, 12-request concurrency, rollback/retry, and local create/replay/protected status reads.
+- Planned/not verified: complete payment-to-fulfillment lifecycle, provider signal ingestion, expiry/cancellation, refund/fulfillment operations, and production release of transaction APIs.
+- Deployment unchanged: production remains Phase 1 at webapp-3-38j.pages.dev; no remote migration or DNS change. Target tolvey.pages.dev is not achieved or proven available.
+- No real payment, delivered customer outcome, revenue, or Money Kit market evidence exists from this checkpoint.
+
 ## 9. What is intentionally not claimed
 - no real customer transaction yet
 - no verified production payment
@@ -93,7 +100,7 @@ Recommended deck:
 9. Data/D1 architecture
 10. Integration architecture
 11. Security/reliability
-12. Current Phase 1 evidence
+12. Verified Phase 1 evidence and explicitly partial Phase 2 checkpoint
 13. Roadmap
 14. Business validation gate
 15. Closing: real transaction evidence as the final proof
