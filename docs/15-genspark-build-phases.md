@@ -187,10 +187,15 @@ Build only the minimum needed:
 
 Possible channels:
 - TOLVEY direct storefront
-- Link.id-style link commerce
-- marketplaces
-- social commerce
-- affiliate/creator distribution
+- Lynk.id
+- Gumroad
+- Shopee where eligible
+- TikTok Shop where eligible
+- Etsy where eligible
+- social discovery/content surfaces
+- other compatible channels admitted by the distribution policy
+
+Channel priority is an execution order, not a sales prediction. Product truth remains canonical in TOLVEY.
 
 Gate:
 - the same canonical product can be distributed to more than one channel without duplicating the source of truth
