@@ -1,7 +1,7 @@
 # TOLVEY Commercial Architecture Master
 
-Status: Architecture lock candidate
-Version: v1.0
+Status: Canonical commercial architecture
+Version: v1.1
 Updated: 2026-09-30
 
 ## 1. Master model
@@ -48,18 +48,28 @@ Search/content: Google Search, YouTube.
 
 Future channels are admitted only when audience fit, product compatibility, economics and attribution are clear.
 
-## 5. Core commercial entities
+## 5. Product hierarchy and commercial boundaries
+
+Canonical hierarchy:
+`Product Family → Single Product → Kit → Bundle → Complete System`
+
+Commercial funnel:
+`Free / Discovery → Single Product → Kit → Bundle → Complete System → Layer 2 Service`
+
+Free products are discovery/funnel assets, not a separate revenue layer. Distribution is a cross-cutting delivery/discovery layer, not a product tier. Layer 2 is implementation/custom work and does not mutate Layer 1 master products.
+
+## 6. Core commercial entities
 Product, ProductVersion, Offer, Bundle, Asset, License, DistributionChannel, ChannelListing, Customer, CheckoutSession, Order, Payment, Fulfillment, Event.
 
-## 6. Source of truth
+## 7. Source of truth
 Internal catalog is authoritative for product identity, version, contents, license, pricing hypothesis, fulfillment and commercial status. Channel listings are derived representations.
 
-## 7. Validation
+## 8. Validation
 Evidence progresses from demand signal → offer interaction → checkout intent → payment → fulfillment → repeat purchase → repeatable channel.
 
 Views, likes, downloads or listing existence alone are not product-market-fit evidence.
 
-## 8. Architecture constraints
+## 9. Architecture constraints
 - No marketplace-specific logic in the product domain.
 - No payment-provider assumptions in product definitions.
 - No duplicated product truth across channels.
@@ -69,5 +79,5 @@ Views, likes, downloads or listing existence alone are not product-market-fit ev
 - Fulfilled purchases reference an immutable product version.
 - Service customization does not silently mutate the master product.
 
-## 9. V1 objective
+## 10. V1 objective
 Prove a small number of products can attract demand, convert, fulfill cleanly and generate evidence before expanding catalog breadth.
