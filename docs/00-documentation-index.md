@@ -22,7 +22,9 @@ Start with:
 15. Testing/release
 16. Roadmap/build phases
 17. Master Genspark prompt
-18. Presentation/submission brief
+18. Commercial validation & metrics
+19. Phase 2 Master System Prompt
+20. Presentation/submission brief
 
 ## Document map
 
@@ -54,6 +56,8 @@ Start with:
 | 24 | Automation/versioning/operations | Operating model |
 | 25 | Deployment/environments/domains | Infrastructure identity |
 | 26 | Presentation/submission brief | Presentation source |
+| 27 | Commercial validation & metrics | Evidence/measurement authority |
+| 28 | Phase 2 Master System Prompt | Phase 2 execution authority |
 
 ## Status vocabulary
 
