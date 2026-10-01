@@ -4,3 +4,12 @@ APP_ENV=local
 TRANSACTION_CORE_ENABLED=false
 # To test locally, generate a private random 32–256 character token in ignored .dev.vars.
 # Never embed the token in browser code or copy it into this example.
+# Phase 3 provider integration is fail-closed and sandbox-only.
+DUITKU_POP_ENABLED=false
+DUITKU_ENV=sandbox
+# Configure only a ROTATED sandbox project through approved ignored runtime secrets.
+# Required variable names (no credentials or usable placeholder values here):
+# DUITKU_MERCHANT_CODE
+# DUITKU_API_KEY (same official secret also called Merchant Key; no separate key)
+# DUITKU_CALLBACK_URL
+# DUITKU_RETURN_URL

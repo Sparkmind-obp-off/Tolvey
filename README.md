@@ -1,88 +1,99 @@
 # TOLVEY
 
-**Product House Hub + Commerce House Hub** for TOLVEY-owned products, initially serving Indonesia. V1 is not a multi-vendor marketplace. Money Kit remains a hypothesis, not evidence of demand or a validated commercial offer.
+**Product House Hub + Commerce House Hub** for TOLVEY-owned products, initially Indonesia. V1 is not a multi-vendor marketplace. Money Kit remains a hypothesis, not validated demand or a live offer.
 
 One canonical product source → many distribution channels → one normalized transaction model → one operational truth.
 
-## Current delivery — PHASE 2 — TRANSACTION CORE
+## Current delivery — PHASE 3 — DUITKU POP
 
-**COMPLETE within the latest continuation gate: provider-neutral local/test transaction core.** Git delivery (commit, push, matching remote SHA, clean tree) is evidenced by the final session report and repository history. No Phase 3 work is authorized or started. Technical simulation is not production commerce readiness.
+**PHASE 3 — CODE COMPLETE / SANDBOX BLOCKED**. Evidence: **LOCAL CONTRACT TEST ONLY**. Baseline main: `7a3b80163b6fd6e65271a4e9b6a00c363ffceb3c` (Phase 2 complete). Final commit/push/clean-tree evidence is in the session report/history.
 
-Baseline: `d0c7b5a03584daa51f4b5b27a18410fc04e98b73` on `main`. Existing foundation and checkpoint work were preserved, not recreated.
+**SANDBOX CREDENTIALS NOT AVAILABLE**: the key shared through chat/upload is compromised and was not reused or read from its file. No rotated approved runtime sandbox key was available. Do not send replacement secrets in chat.
 
-### Implemented and locally verified
+Implemented and locally verified:
+- Isolated Duitku POP adapter, fail-closed sandbox config, current official HMAC-SHA256 request/callback signatures and fixed-length verification.
+- Canonical positive integer IDR order → POP createInvoice → normalized reference/payment URL → existing atomic payment core. No V2 invoice, custom method selector, public customer checkout or catalog changes.
+- Private initiation reservation prevents duplicate outbound invoice calls; safe receipt retry after canonical attachment failure. Ambiguous external outcomes block blind retries and require reconciliation.
+- Minimal authenticated form callback route: strict encoding/content/body limits, merchant/order/reference/money/state checks, safe status mapping and callback replay/conflict protection.
+- Callback HMAC does not sign resultCode/reference, so first acceptance additionally requires server-side transaction-status verification. Uses the **common official Cek Transaksi API**, not V2 checkout. Its POP-project interoperability must still be proven live; it is not presented as a POP-specific documented status endpoint.
+- Neutral browser return page; supplied resultCode/query never confirms payment.
+- Provider-only additive migration 0004. Existing migrations 0001–0003, canonical schema/state graph and Phase 2 regressions preserved.
+- **220 passing tests** in six suites: previous 150 + 70 POP contract tests. Typecheck/format/build (~62.73 kB), fresh/upgrade/FK/integrity, concurrency/rollback and compiled workerd verification passed. npm audit: zero known vulnerabilities. No dependencies added.
 
-- Canonical Product/ProductVersion/Offer in D1, active-only read APIs and Hono/TypeScript/Cloudflare Pages Worker.
-- Atomic checkout, immutable commercial snapshots, pending order, one BLOCKED fulfillment and creation audit. No payment is invented during checkout.
-- Provider-neutral payment attempt persisted with UUID, adapter key/reference, canonical order money, initiation timestamp and hashed idempotency identity.
-- Trusted **internal simulation** confirmation/failure processing validates order/payable state, payment/provider/transaction references, exact integer amount, currency/exponent and expiry. Never accepts browser success.
-- Atomic cross-entity lifecycle via D1 batch, revision compare-and-swap, durable immutable operation receipts, signal identity dedup and hashed retry-key aliases. Changed meaning conflicts; identical replay cannot reopen old states.
-- Explicit idempotent expiry/cancellation synchronizes session/order/pending payment and fulfillment where applicable. Late payments are rejected even before an expiry sweep.
-- Fulfillment authorization, simulated completion, failure and safe retry reuse the original fulfillment row. No delivery side effects occur.
-- Refund **request only**: REFUND_PENDING, preserves original payment identity/money/confirmation. No refund completion operation or claim of money returned.
-- Append-only events/receipts/replay audits, FK/money/state/uniqueness/identity guards; migration 0003 is additive. Migrations 0001/0002 are unchanged.
-- **150 passing tests**: 69 foundation + 40 checkpoint + 41 lifecycle. Typecheck/format/build pass; Worker ~40.05 kB. Fresh/upgrade migrations, rollback/retry, concurrency, compiled workerd lifecycle and FK/integrity checks pass. npm audit: zero known vulnerabilities at verification.
+No live Duitku request/payment/callback was executed. Stub responses are not sandbox success. No production deploy, remote migration, secret activation, DNS/resource change or Phase 4 work.
 
-### Internal lifecycle contract (not HTTP)
+### Modules and provider boundary
 
-`src/transaction-lifecycle.ts` exports `createSimulationCore(db, environment)`; environment is trusted configuration, never a request field. Only `local`/`test` are accepted; staging/production fail closed. It is not imported by the production Hono entry and is absent from the deployed application bundle. The test-only Worker harness is bundled in memory, never deployed.
+- `duitku-config.ts`: sandbox environment/HMAC/limits.
+- `duitku-pop.ts`: provider wire contracts/authentication/status mapping.
+- `duitku-gateway.ts`: private reservation/attachment and notification orchestration/audit.
+- `duitku-api.ts`: callback HTTP boundary.
+- Existing `transaction-lifecycle.ts` engine reused through narrow `createPaymentCore`; generic domain/order/fulfillment never contains Duitku request or signature logic. Simulation wrapper/restrictions remain intact and absent from application bundle.
 
-Methods:
-- `initiatePayment(orderId, {provider, provider_reference}, context)` — no client money/status inputs; SQL copies canonical money.
-- `processSignal(orderId, signal, context)` — normalized internal simulated CONFIRMED/FAILED signals only, not a provider callback. `VerifiedPaymentSignal` is a shape, **not proof of authentication**.
-- `expireOrder`, `cancelOrder`, `authorizeFulfillment`, `completeFulfillment`, `failFulfillment`, `requestRefund` — `(orderId, context)`.
-- Context: `{ key, request_id, now? }`; key uses existing 16–128 ASCII policy; request ID is UUIDv4. UTC clock override is trusted local/test tooling only.
-- Result: `{ receipt, replayed }`. Receipt is the original immutable operation outcome, not a promise of current state. Obtain current state via protected order read. New authorization key is required after fulfillment failure; replaying an old authorization does not retry it.
-- Identical operations replay, conflicting fingerprints return 409. Concurrent different commands may reject `CONCURRENT_TRANSITION` (409); re-read state before deciding whether to retry. Terminal states cannot reopen. Repeated expiry/cancel/refund with new keys replay the original operation. New signal IDs after confirmation are terminal conflicts, not extra confirmations.
+### Configuration — names only
 
-Before real provider use, Phase 3 must supply a reviewed authenticated adapter/gateway, verified provider/merchant context and clocks. Do not enable simulation in production or expose this factory to browser input.
+`APP_ENV`, `DB`, `DUITKU_POP_ENABLED`, `DUITKU_ENV`, `DUITKU_MERCHANT_CODE`, `DUITKU_API_KEY`, `DUITKU_CALLBACK_URL`, `DUITKU_RETURN_URL`.
 
-### Existing protected checkout API
+Only APP_ENV local/test + DUITKU_ENV sandbox + enabled flag + isolated DB + valid secret/HTTPS URLs are accepted. Production/staging are rejected, even with sandbox credentials. API Key and Merchant Key are the same official secret; no extra merchant-key variable. `.dev.vars.example` is disabled and contains no usable credential placeholders. Real configuration must use approved ignored runtime secret storage; never browser, logs, fixtures or Git.
 
-Disabled by default; production explicitly rejected even with enabled flag/token. One private internal service principal, **not** customer auth, tenant ownership, public admin API or Hosted admission rules.
+### Initiation and reliability
 
-Non-production checkpoint access requires D1, explicit APP_ENV, `TRANSACTION_CORE_ENABLED=true`, private `TRANSACTION_CORE_TOKEN` (32–256 chars) and server-only bearer authorization. Do not create or put tokens in customer browser code.
+Internal server function only: `duitkuGateway(env).initiate(orderId, {email}, requestId)`. Required email is sent to provider, not stored/logged as plaintext. Only email is accepted; client amount/currency/order/status overrides are rejected. Canonical snapshot owns amount/details/expiry; `merchantOrderId = order.id` (UUID), provider reference separate. POP hosts the payment method page; redirect URL is returned only from the trusted sandbox origin.
 
-- POST `/api/transaction-core/checkouts`: bounded 2048-byte JSON, only UUID `offer_id`, quantity 1–100, source label and optional opaque UUID customer reference. `Idempotency-Key` required. Create 201; matching replay 200; conflicting meaning 409.
-- GET `/api/transaction-core/checkouts/:id` and `/api/transaction-core/orders/:id`: protected safe DTOs omit private delivery/customer reference and keys/hashes.
-- Disabled/production 503; unauthorized 401; malformed 400; unavailable/missing 404; oversized 413; unexpected error generic 500. Errors include request ID, never SQL/credentials.
-- No payment/signal/refund/fulfillment mutation HTTP routes. Other writes remain 405. Flag-enabled readiness now requires all three transaction migrations.
+One durable reservation before the external request prevents concurrent duplicate calls. Same READY receipt can replay; changed meaning conflicts. If receipt persisted but canonical attachment failed, retry attaches it without another invoice. **RESERVED after ambiguous timeout/crash/error means INITIATION_RECONCILIATION_REQUIRED**: verify provider-side outcome before recovery; do not delete reservation or automatically create another invoice. Automatic reconciliation/job is not implemented or claimed.
 
-## Deployment status / URLs
+### Callback / return / readiness
 
-- Repository: https://github.com/Sparkmind-obp-off/Tolvey — `main`.
-- **Existing production is Phase 1 only:** https://webapp-3-38j.pages.dev at source `efd5d7d8408646f04e0a72afd52849ba6b550a07`.
-- No remote migration/deploy/secrets/DNS/resource changes in this continuation. No production transaction API enablement.
-- Desired `tolvey.pages.dev` / business domain `tolvey.biz.id` are not achieved here. Earlier account audit found project `tolvey` absent in this account; global hostname availability was not proven. Preserve existing project until deliberate release/identity review (docs/25).
-- Preview/staging has no DB binding due earlier account quota; never attach production D1 to preview or delete unrelated resources.
-- Sandbox port 3000 is temporary local verification, not production.
+- POST `/api/provider/duitku-pop/callback`: minimum public provider route, requires enabled sandbox configuration and valid provider HMAC; form-urlencoded ≤8192 actual streamed bytes, duplicate/malformed fields rejected. Then canonical mapping/money, status verification and atomic core transition. Identical callbacks safely return 200 `OK`; conflicts do not mutate confirmed payments. Outward errors are generic with request ID.
+- GET `/payments/duitku-pop/return`: neutral processing statement, ignores supplied status/query, no mutation/customer data disclosure.
+- No public initiation/admin/arbitrary success/fulfillment/refund mutation API.
+- When DUITKU_POP_ENABLED is true, `/ready` checks sandbox config plus all four migrations. Default foundation readiness unchanged.
 
-## Public foundation routes
+Callback 00 requires status-service 00 → CONFIRMED; callback 01 requires status-service 02 → FAILED. Status-service 01 means pending, no terminal mutation. Unknown/inconsistent states fail closed. The server callback's 01 is not the browser JS pending code. Verified success intentionally leaves **PAYMENT_CONFIRMED/BLOCKED** for existing fulfillment handoff; no actual delivery or automatic authorization/retry in this phase.
 
-| Route | Behavior |
-| --- | --- |
-| GET `/` | Honest foundation status, no purchasing |
-| GET `/health` | Liveness 200, still identifies deployed surface as foundation |
-| GET `/ready` | Catalog readiness; additional transaction schema probe if enabled |
-| GET `/api/products?limit=20&after=<UUID>` | Active products, limit 1–50/keyset pagination |
-| GET `/api/products/:id` | UUIDv4 validation; malformed 400, hidden/missing 404 |
-| GET `/api/offers?limit=20&after=<UUID>` | Active offer/product/version only |
-| GET `/api/offers/:id` | Public DTO; no private delivery/version data |
-| GET `/static/style.css` | Static styling |
+See [docs/14](docs/14-duitku-pop-integration.md) for official references, wire formulas, audit/retry behavior, limitations and troubleshooting.
 
-Collections: `{data: [], next_cursor: null}`. Singles: `{data: {...}}`. Unknown routes JSON 404; other mutations 405 except the protected checkpoint create route; bodyless HEAD and OPTIONS 204. No permissive CORS.
+## Completed Phase 1 / Phase 2 foundation
 
-## Data and money
+Phase 1: Hono/TypeScript/Cloudflare Pages Worker, D1 Product/ProductVersion/Offer, active-only safe reads, health/readiness, security headers/request IDs/generic logs, 69 tests and BYOK foundation deployment.
 
-D1 persists products, product_versions, offers, checkout_sessions, orders, payments, fulfillments, transaction_events and migration-0003 operation/key/replay ledgers. No runtime in-memory/file persistence.
+Phase 2: immutable canonical purchase snapshots, atomic checkout/pending order/BLOCKED fulfillment/events, provider-neutral payment/fulfillment lifecycle, exact money validation, revision CAS/operation receipts/key aliases/replay audits, expiry/cancel/failure/retry and refund request only. Gate completed at commit `7a3b801...` with 150 tests. Phase 3 reuses that engine, not a replacement state machine.
 
-Offer owns price. Nonnegative integer minor units ≤ Number.MAX_SAFE_INTEGER, explicit uppercase currency and exponent. Exact BigInt-derived multiplication bound; SQL copies purchase/payment money. Test fixture: 20000 IDR/exponent 0; not a sellable production product. Purchase snapshots and referenced version content stay immutable after checkout; future offer price/name edits cannot rewrite orders. Private delivery reference is opaque configuration, not a signed URL or actual delivery implementation.
+`createSimulationCore(db, environment)` stays local/test-only. It exposes full internal simulation lifecycle but is never called by browser/provider callbacks. New provider gateway exposes payment initiation/signal processing only. Terminal orders cannot reopen; refund remains pending/requested only. REFUNDED vocabulary is not an external refund implementation.
 
-Expiry lifetime: 30 minutes, immutable. Expiry is an explicit core operation, not a scheduled job; initiation/signals always enforce the deadline. Payment failure closes the checkout as CANCELLED, while order/payment remain FAILED and fulfillment BLOCKED. Expiry keeps unpaid fulfillment BLOCKED; cancellation makes it CANCELLED. Refund cancels a pending fulfillment, preserves already FULFILLED/FAILED history and never erases confirmation.
+### Existing checkpoint API
 
-## Local development / verification
+Disabled by default, production forbidden. One private internal service principal, not customer/tenant auth or Hosted admission. D1 + explicit non-production APP_ENV + TRANSACTION_CORE_ENABLED + server-only TRANSACTION_CORE_TOKEN required.
 
-Node ≥22.12; dependencies locked. All code resides in `/home/user/webapp`.
+- POST `/api/transaction-core/checkouts`: JSON ≤2048 bytes, offer UUID, quantity 1–100, source label, optional opaque customer UUID; required Idempotency-Key. Create 201, matching replay 200, conflict 409. Client money/status rejected.
+- GET `/api/transaction-core/checkouts/:id`, GET `/api/transaction-core/orders/:id`: protected DTOs; no private delivery/customer references or keys/hashes.
+- Disabled/production 503; unauthorized 401; malformed 400; missing/unavailable 404; oversized 413; generic unexpected 500.
+
+No production checkpoint API enablement; no public customer transaction access/rate-limit policy is implied.
+
+## Deployment / URLs
+
+- Repository: https://github.com/Sparkmind-obp-off/Tolvey — main.
+- Existing production remains **Phase 1 only**, https://webapp-3-38j.pages.dev, last known deployed source `efd5d7d8408646f04e0a72afd52849ba6b550a07`. Not re-deployed this session.
+- Target `tolvey.pages.dev` / intended `tolvey.biz.id` not achieved here; earlier account absence was not global hostname availability. Preserve current project; see docs/25 for later deliberate identity gate.
+- Preview/staging has no DB due earlier account quota, never share production D1. No remote resource was created/deleted or mutated.
+- Sandbox port 3000 is temporary local runtime, not production.
+
+## Foundation routes
+
+GET `/` honest status (no purchasing); `/health` liveness; `/ready` schema/config; `/api/products` and `/api/offers` active-only lists with limit 1–50 and optional UUID keyset `after`; ID reads validate UUIDv4, hide draft/archived/private fields; `/static/style.css` static CSS. Collections `{data: [], next_cursor: null}`; singles `{data: {...}}`; unknown 404; denied mutations 405 except protected checkpoint create and authenticated provider callback. HEAD bodyless, OPTIONS 204, no permissive CORS.
+
+## Data / money
+
+D1 is canonical persistence. Products → versions → offers → checkout/order snapshots → payment → fulfillment. Events and operation/key/replay ledgers are audit, not a revenue/accounting ledger. Provider metadata is isolated in `duitku_pop_invoices` and `duitku_pop_notifications`, with no duplicate amount or plaintext credentials/customer payload.
+
+Integer minor money ≤ Number.MAX_SAFE_INTEGER, uppercase currency, explicit exponent, exact BigInt-derived quantity bound; Offer owns price. IDR contract fixture 20000/exponent zero is test-only. Referenced versions/purchases/payment identities and confirmation history stay immutable. Private delivery references are opaque configuration, not actual downloads/assets.
+
+Checkout lasts 30 minutes; initiation/signals enforce expiry independently of an explicit expiry operation. Cancel/expire/payment failure cannot authorize delivery. Fulfillment failure preserves confirmation, retries reuse one row. Refund request preserves original confirmation and completed history; no provider refund call.
+
+## Local verification
+
+Node ≥22.12; locked dependencies. Workspace `/home/user/webapp`.
 
 ```sh
 npm ci
@@ -98,17 +109,12 @@ curl http://localhost:3000/ready
 pm2 logs tolvey --nostream
 ```
 
-`npm test` builds first. Tests create isolated real D1/workerd; no remote DB or real payment credential is used. Formatting excludes historical Markdown/SQL; SQL is validated by migrations/runtime tests. PM2 is tooling only; deployed code uses Web APIs, no Node runtime imports or compatibility flag.
+`npm test` builds first. Formatting excludes historical Markdown/SQL; migrations validate SQL. No separate lint tool. Tests use isolated real D1/workerd and strictly stub provider traffic; ephemeral test material is not sent to Duitku. Test-only initiation harness exists in memory, never in public/dist/deploy routes. Deployed code uses Web APIs, no Node runtime imports.
 
-Fresh migration verification used isolated `.wrangler/phase2-lifecycle-fresh`; upgrade preserved an existing checkpoint order. Reruns report no pending migrations. FK checks empty; read-only SQLite integrity checks returned `ok`. D1 API disallows integrity_check (SQLITE_AUTH), so the integrity check was performed on local SQLite only. No destructive rollback: injected audit failures prove batch rollback; recovery for real production commerce is still future work.
+Fresh `.wrangler/phase3-pop-fresh` migration and existing-local upgrade passed; old canonical records checksum unchanged, rerun no-op, FK empty and read-only SQLite integrity ok. No destructive rollback or remote schema change. PM2 default: health/ready 200, callback/checkpoint 503, public initiation absent 405, return 200. HMAC/log/DTO hygiene checks pass; pattern scan/npm audit are not a full security audit.
 
-Secrets/local databases/build/logs are ignored. No supplied payment credential was read, copied, stored, logged or used in this phase. Limited pattern/history hygiene and npm audit are not a complete security audit. Rotate any credential shared in chat before later provider work; do not send replacement secrets in chat.
+## Remaining blockers / next action
 
-## Remaining outside Phase 2 / next steps
+Remain in Phase 3 until rotated approved sandbox project credentials and a reachable approved non-production HTTPS callback/return origin/isolated DB are configured, then execute live POP invoice → hosted payment → callback → common status verification → canonical success/failure/duplicate scenarios. Verify current HMAC rollout, status API compatibility and provider acknowledgement behavior with the actual project. Do not silently fall back to obsolete signatures.
 
-- Phase 3 is **not started**: official provider specification review, sandbox adapter authenticity/merchant checks, provider-side idempotency/reconciliation and authenticated callback gateway.
-- Real product validation/assets, actual delivery, public customer checkout, rate limits/record authorization, operator/dashboard, distribution/Layer 2, customer outcomes and commerce analytics remain unimplemented.
-- REFUNDED stays in the domain/schema vocabulary for future verified provider refund evidence; Phase 2 exposes request/pending only.
-- Canonical deployment identity, remote staging quota, production recovery/access reviews are future release prerequisites, not claims made by local core completion.
-
-No real payment, refund, delivery, revenue, demand or production commerce readiness is inferred from these tests. Stop after Phase 2 delivery; entering Phase 3 requires a separate explicit request.
+Production payment stays disabled. Later release requires production-specific project/key, domain/DNS, activated channels, access/rate limits, monitoring/recovery/security and real end-to-end evidence. Actual product/delivery/public storefront/distribution/Layer 2/revenue/demand remain outside this session. **Do not start Phase 4.**

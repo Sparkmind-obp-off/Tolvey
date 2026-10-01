@@ -39,8 +39,8 @@ Current foundation:
 - Git-based release discipline
 
 Planned:
-- provider authentication/callback gateway (internal provider-neutral core is implemented)
-- Duitku POP adapter
+- live sandbox verification (POP adapter/callback gateway code is locally verified)
+- production provider activation/release
 - fulfillment/delivery
 - distribution adapters
 - operational observability hardening
@@ -64,6 +64,12 @@ Phase 2 continuation (2026-09-30): **COMPLETE within provider-neutral local/test
 - Not implemented: real provider authentication/callbacks, actual payment/delivery/refund, public customer checkout or production commerce release.
 - Production remains Phase 1 at webapp-3-38j.pages.dev; no remote migration/deploy/DNS changes. Target hostname/domain not achieved or proven available.
 - No real customer outcome, revenue, demand or Money Kit market evidence.
+
+Phase 3 code verification (2026-10-01): CODE COMPLETE / SANDBOX BLOCKED.
+- Implemented + locally Verified: isolated POP/HMAC adapter, canonical initiation, minimum authenticated callback/status verification, replay/conflict controls and provider-only audit/metadata.
+- Verified: 220 tests including 70 POP contract tests, compiled workerd/Hono callback success/failure/duplicate/invalid using strict provider stubs, typecheck/format/build, fresh/upgrade/FK/integrity.
+- Blocked: rotated approved sandbox credentials and live POP invoice/payment/callback/status interoperability. LOCAL CONTRACT TEST ONLY, not sandbox transaction evidence.
+- No production deploy/activation, real delivery/refund, revenue/demand or Phase 4 work. Phase 2 completion/history remains intact.
 
 ## 9. What is intentionally not claimed
 - no real customer transaction yet

@@ -57,7 +57,13 @@ describe('repository safety boundaries', () => {
       expect(source).not.toMatch(
         /(?:from\s+|import\s*)['"](?:node:|fs['"]|child_process['"]|@hono\/node-server)/,
       );
-      expect(source).not.toMatch(/DUITKU_|CLOUDFLARE_API_TOKEN|process\.env/);
+      expect(source).not.toMatch(/CLOUDFLARE_API_TOKEN|process\.env/);
+      if (
+        !name.startsWith('duitku-') &&
+        name !== 'types.ts' &&
+        name !== 'index.ts'
+      )
+        expect(source).not.toMatch(/DUITKU_/);
     }
   });
 

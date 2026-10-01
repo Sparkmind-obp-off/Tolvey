@@ -12,6 +12,9 @@ import {
 import type { AppContext } from './types';
 import transactionRoutes, { coreAvailable } from './transaction-api';
 import { verifyTransactionSchema } from './transaction-store';
+import duitkuRoutes from './duitku-api';
+import { duitkuConfig } from './duitku-config';
+import { verifyDuitkuSchema } from './duitku-gateway';
 
 const app = new Hono<AppContext>();
 
@@ -51,7 +54,14 @@ app.use('*', async (c, next) => {
 app.use('*', async (c, next) => {
   const isCheckoutWrite =
     c.req.method === 'POST' && c.req.path === '/api/transaction-core/checkouts';
-  if (!['GET', 'HEAD', 'OPTIONS'].includes(c.req.method) && !isCheckoutWrite) {
+  const isProviderCallback =
+    c.req.method === 'POST' &&
+    c.req.path === '/api/provider/duitku-pop/callback';
+  if (
+    !['GET', 'HEAD', 'OPTIONS'].includes(c.req.method) &&
+    !isCheckoutWrite &&
+    !isProviderCallback
+  ) {
     c.header('Allow', 'GET, HEAD, OPTIONS');
     return c.json(
       { error: 'METHOD_NOT_ALLOWED', request_id: c.get('requestId') },
@@ -83,6 +93,10 @@ app.get('/ready', async (c) => {
         );
       await verifyTransactionSchema(c.env.DB);
     }
+    if (c.env.DUITKU_POP_ENABLED === 'true') {
+      duitkuConfig(c.env);
+      await verifyDuitkuSchema(c.env.DB);
+    }
     return c.json({ status: 'ready' });
   } catch {
     console.error(
@@ -106,6 +120,12 @@ app.use('/api/*', async (c, next) => {
 });
 
 app.route('/api/transaction-core', transactionRoutes);
+app.route('/api/provider/duitku-pop', duitkuRoutes);
+app.get('/payments/duitku-pop/return', (c) =>
+  c.html(
+    `<!doctype html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TOLVEY — Status pembayaran</title></head><body><main><h1>Pembayaran sedang diverifikasi</h1><p>Kembali dari halaman pembayaran bukan bukti pembayaran berhasil. Status hanya berubah setelah notifikasi server terverifikasi.</p></main></body></html>`,
+  ),
+);
 
 for (const resource of ['products', 'offers'] as const) {
   app.get(`/api/${resource}`, async (c) => {

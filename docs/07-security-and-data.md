@@ -55,3 +55,13 @@ Money is copied from immutable order data and matched exactly on signals. Revisi
 For a suspected credential leak: disable/rotate credential; inspect affected scope; invalidate sessions/tokens where possible; inspect logs; document incident; restore minimum required access; record remediation.
 
 Never paste secret values into GitHub issues, documentation, chat, or commits.
+
+## Phase 3 POP security boundary — 2026-10-01
+
+Only sandbox/local/test is accepted; provider configuration missing/disabled/production/staging fails closed. Secrets are runtime-only, API Key equals official Merchant Key; no extra secret variable or hard-coded merchant code. Chat/upload key is compromised and not read/reused. No production enablement.
+
+Minimum callback route validates HMAC-SHA256 over documented merchant/amount/order fields. resultCode/reference are NOT signed, so first acceptance requires a matching authenticated server-side status read before normalized core processing. Merchant/reference/order/money and terminal/expiry rules still apply. Unknown status/outage is fail-closed; exact accepted fingerprint replays can skip status read without repeating a payment. Conflicts are rejected/audited.
+
+Bounded form/body/encoding, rejected duplicate fields, TLS/redirect restrictions, trusted payment URL, generic error/log/request context, no raw signatures/provider bodies/customer/card data. Public browser return never confirms payment. Privileged initiation remains a function, no public HTTP route. Provider data audit is supplemental, not a financial ledger or business metrics.
+
+Required email is transmitted to the sandbox provider, not logged/persisted in plaintext; production/customer retention and public access/rate limits require later review. Local stubs/ephemeral test material are not credentials usable on the live provider. No complete security audit or production recovery claim. See docs/14 for live compatibility/rotation prerequisites.

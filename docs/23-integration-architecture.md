@@ -78,7 +78,7 @@ Every integration must have:
 - test strategy
 - rollback/removal plan
 
-## 10. Current integrations
+## 10. Historical Phase 1/Phase 2 integration foundation
 Phase 1: Cloudflare Pages/Workers + D1 foundation.
 
 Phase 2 checkpoint adds a provider-neutral TypeScript `PaymentAdapter` contract (`initiate`, `verifyNotification`) and normalized `VerifiedPaymentSignal` type. There is no implementation or runtime provider call, and no callback HTTP route. Later core processing must still validate expected provider/reference/amount and deduplicate authenticated signals before changing financial truth.
@@ -86,3 +86,11 @@ Phase 2 checkpoint adds a provider-neutral TypeScript `PaymentAdapter` contract 
 Internal local/test provider-neutral initiation/signal/fulfillment/refund-request orchestration is now implemented in transaction-lifecycle.ts and verified in a compiled in-memory workerd harness (150 total tests). Production application does not import it. Simulation rejects staging/production. It checks exact expected money/reference/expiry and deduplicates signals; it does NOT authenticate a real provider. Type/interface naming is never proof of authentication.
 
 No provider calls, callbacks, Duitku, real payment, actual delivery or actual refund exist. Future adapter/gateway must verify provider/merchant authenticity before calling equivalent core orchestration; do not bypass production restrictions by passing a fake local/test environment. Refund completion remains unexposed. External side-effect idempotency/reconciliation belongs to the future adapter, not a claim of exactly-once delivery by the internal simulation.
+
+## 11. Current Phase 3 POP adapter
+
+CODE COMPLETE / SANDBOX BLOCKED. Provider-specific configuration/request/HMAC/form parsing/status mapping reside in flat `duitku-*` modules. Generic engine/domain/schema remain neutral, reused through a narrow payment-only service facade. No V2 checkout, provider refund, disbursement, marketplace or delivery.
+
+Current official POP documents require HMAC-SHA256 (not the legacy SDK MD5/SHA formulas). Since callback HMAC omits resultCode/reference, first acceptance also verifies the common official Cek Transaksi API. This is not a POP-documented status endpoint; compatibility with the actual rotated POP sandbox project remains a live gate. No insecure fallback or signature guess is allowed.
+
+220 tests (70 new contract tests), strict stub traffic, compiled workerd/application callback success/failure/duplicate/invalid scenarios are LOCAL CONTRACT TEST ONLY. No usable approved sandbox credential was available; no live call/payment/notification was executed. Exposed chat key/file is not used. Configuration fails closed in production/staging; no deploy/DNS/remote D1 changes. Remaining live setup/evidence is described in docs/14.

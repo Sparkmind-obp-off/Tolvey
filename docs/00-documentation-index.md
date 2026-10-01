@@ -90,7 +90,7 @@ Current state:
 - Phase 0 — Audit: complete
 - Phase 1 — Foundation: complete
 - Phase 2 — Transaction Core: COMPLETE within the latest provider-neutral local/test continuation gate; 150 tests, atomic lifecycle, expiry/cancel, fulfillment retry and refund-request representation verified. Git delivery evidence is in the final session report. No production commerce/provider/delivery readiness is claimed.
-- Phase 3 — Duitku POP: planned
+- Phase 3 — Duitku POP: CODE COMPLETE / SANDBOX BLOCKED; local contract/runtime verified, live sandbox credentials unavailable. No production payment or Phase 4 authorization.
 - Phase 4 — Product-to-Commerce Loop: planned
 - Phase 5 — Distribution: planned
 - Phase 6 — Observability & Security Hardening: planned

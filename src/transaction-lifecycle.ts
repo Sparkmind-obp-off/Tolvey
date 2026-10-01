@@ -93,7 +93,23 @@ function fields(input: unknown, names: string[]): Record<string, unknown> {
 export function createSimulationCore(db: D1Database, environment: string) {
   if (!['local', 'test'].includes(environment))
     throw new TransactionError('SIMULATION_FORBIDDEN', 503);
+  return lifecycleEngine(db);
+}
 
+/** Reviewed service-only gateway. No simulation/completion/refund capability exposed.
+ * Environment comes from trusted deployment config; callers must authenticate provider signals.
+ */
+export function createPaymentCore(db: D1Database, environment: string) {
+  if (!['local', 'test'].includes(environment))
+    throw new TransactionError('PAYMENT_CORE_FORBIDDEN', 503);
+  const engine = lifecycleEngine(db);
+  return {
+    initiatePayment: engine.initiatePayment,
+    processSignal: engine.processSignal,
+  };
+}
+
+function lifecycleEngine(db: D1Database) {
   async function payment(orderId: string) {
     return db
       .prepare(

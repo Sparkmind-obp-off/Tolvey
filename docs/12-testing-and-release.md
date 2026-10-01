@@ -82,3 +82,13 @@ Redeploy a previously verified Pages artifact/commit compatible with the existin
 
 ## Operational rule
 Prefer small, reversible releases. Ship the smallest change that proves or improves a real business workflow, then observe before expanding scope.
+
+## Phase 3 local contract evidence — 2026-10-01
+
+220 passing tests in six suites (150 prior + 70 POP), typecheck/format/build (~62.73 kB), npm audit zero known vulnerabilities. No separate lint tool is configured. Core schema/state/Phase 2 regression preserved, existing migrations unchanged. Tests cover canonical initiation, HMAC RFC4231/independent Node formulas, config failures/separation, strict request/response/form limits, money/reference/merchant/status mismatches, unknown/cancelled/expired/paid orders, 10 concurrent initiations (one outbound invoice), 12 duplicate callbacks (one confirmation), conflicts, unsigned-result tampering, status outage, transient canonical attachment recovery and audit rollback/retry. Logs/DTOs contain no test secret/raw SQL/body.
+
+Compiled workerd harness strictly stubs provider HTTP and exercises actual Hono callback route: success/failure/duplicate 200 OK, bad signature 401, health/readiness 200. Stub routes/transport are in-memory test code, never public/deployed. Default PM2 runtime without secrets: callback/checkpoint 503, public initiation absent 405, return 200, health/ready 200.
+
+Fresh/upgrade Wrangler local migration 0004 and checksum-preserved canonical records, rerun no-op, FK empty, offline read-only SQLite integrity ok. No remote migration/deploy. Limited source/build/history/log scan and final clean pushed-main evidence are in the session report, not a comprehensive security audit.
+
+Evidence level: LOCAL CONTRACT TEST ONLY; SANDBOX CREDENTIALS NOT AVAILABLE. No rotated approved sandbox key was available; supplied chat/file credentials were not reused. Live POP creation/hosted payment/authenticated callback, common status API compatibility/acknowledgement and actual success/failure/duplicate end-to-end behavior must still pass before Phase 4. Production payment stays disabled.

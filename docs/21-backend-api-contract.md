@@ -36,7 +36,7 @@ Authorization/configuration: `DB`, explicit non-production APP_ENV, `TRANSACTION
 - GET `/api/transaction-core/checkouts/:id`; GET `/api/transaction-core/orders/:id`: protected snapshots/status; malformed UUID 400, nonexistent 404. Private delivery/customer reference, key/hash and version metadata are excluded from DTOs.
 - 503 `TRANSACTION_CORE_UNAVAILABLE` when disabled/incomplete/production; 401 `UNAUTHORIZED`; malformed/body/content/type/key input 400; unavailable offer 404; oversized body 413; generic unexpected error 500. Error shape `{ error, message, request_id }`, no SQL/provider/credential details.
 - `/ready` retains default foundation behavior and adds transaction-schema/config probes when the flag is true.
-- GET/HEAD/OPTIONS conventions stay intact; only the exact checkpoint create POST bypasses the global mutation barrier. Other mutation paths still return 405. No payment-confirmation/fulfillment/arbitrary transition mutation route exists.
+- GET/HEAD/OPTIONS conventions stay intact; the exact checkpoint create POST bypasses the global mutation barrier; Phase 3 adds only the authenticated provider callback exception described below. Other mutation paths still return 405. No payment-confirmation/fulfillment/arbitrary transition mutation route exists.
 
 Expiry/cancellation/payment/fulfillment capabilities are implemented as internal functions only (below), not HTTP routes. Expiry is explicit, not scheduled; initiation/confirmation reject overdue orders regardless of sweep. Stable transaction reference is provider-neutral; real provider constraints/authentication remain Phase 3.
 
@@ -96,4 +96,16 @@ Prefer additive, backward-compatible API changes.
 Breaking public contract changes require a documented migration/version strategy.
 
 ## 10. Current status
-Foundation reads, protected non-production checkout/order API and internal local/test lifecycle are implemented and verified (150 tests). Phase 2 continuation gate is complete, subject to final Git delivery. Public customer checkout/provider verification are not implemented. Transaction migrations/services have not been deployed or migrated remotely.
+Foundation reads, protected non-production checkout/order API and internal local/test lifecycle are implemented and verified (150 tests). Phase 2 continuation gate is complete, subject to final Git delivery. Public customer checkout is not implemented. The Phase 3 sandbox adapter below verifies contract/authentication locally; live provider verification remains blocked. Transaction migrations/services have not been deployed or migrated remotely.
+
+## Phase 3 sandbox provider boundary — 2026-10-01
+
+Status: CODE COMPLETE / SANDBOX BLOCKED; LOCAL CONTRACT TEST ONLY. See docs/14 for exact wire formulas and unverified live prerequisites.
+
+POST `/api/provider/duitku-pop/callback` is the only new publicly reachable mutation. Disabled by default, production/staging forbidden. Requires valid sandbox configuration and provider HMAC, form-urlencoded, actual streamed limit 8192 bytes, strict UTF-8/percent encoding and no duplicate fields. Valid merchant/order/money/reference + first-notification status query + core transition required before HTTP 200 plain OK. Identical authenticated replay is 200 without repeating confirmation. Malformed 400, authentication 401, unknown 404, conflicts/terminal 409, oversized 413, unavailable/pending 503. Outward body is generic PAYMENT_NOTIFICATION_REJECTED + request ID; no raw errors or payloads. Authentication is provider business authorization, not Hosted site admission.
+
+GET `/payments/duitku-pop/return` is neutral processing text, ignores supplied query, never mutates or exposes transaction truth. No public initiation/admin/arbitrary confirmation/fulfillment/refund routes.
+
+Private function `duitkuGateway(env).initiate(orderId,{email},requestId)`: only email contact input, canonical server money/order ID. Email is required by POP, transmitted to provider and retained only as a request fingerprint, not plaintext. Concurrent outbound invoice attempts are reserved once; ambiguous outcomes require reconciliation rather than blind retry. READY persisted receipt can recover canonical attachment. No caller-provided amount/status overrides.
+
+DUITKU_POP_ENABLED readiness checks config + all four migrations. Default foundation readiness stays unchanged. `createPaymentCore` reuses the generic Phase 2 engine and exposes only payment initiation/signal processing to the authenticated sandbox gateway; simulation wrapper remains unexposed. Production gate is explicitly not enabled.

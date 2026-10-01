@@ -114,3 +114,15 @@ Before production commerce:
 - define application rollback
 - preserve transaction/audit records
 - rehearse recovery on non-production data
+
+## Phase 3 provider metadata — migration 0004
+
+Additive `0004_duitku_pop.sql`, existing 0001–0003 unchanged:
+- `duitku_pop_invoices`: unique canonical order/merchantOrderId mapping, sandbox environment, project/request SHA256 hashes, ownership UUID, RESERVED/READY, unique provider reference, trusted payment URL and timestamp. No duplicate canonical money, raw credentials or plaintext email.
+- `duitku_pop_notifications`: append-only authenticated outcome audit with optional order FK, normalized payload hash, ACCEPTED/REPLAYED/REJECTED, safe code/request/time. No raw signature/body/PII/card metadata. Invalid unauthenticated requests use sanitized HTTP outcome logs instead.
+
+Reservation precedes the external invoice side effect and blocks duplicate outbound attempts. READY receipt is immutable and lets canonical attachment recover with the existing Phase 2 operation key. A RESERVED ambiguous external outcome is never blindly reset/retried/deleted; provider reconciliation is required. No queue/job or automatic recovery is claimed.
+
+Canonical state/events/operation receipt remain atomic in the existing D1 batch. Provider notification audit is supplemental: audit failure after canonical commit returns failure to the provider; replay later records the outcome without another confirmation. Provider tables are not financial ledgers/revenue aggregates.
+
+Fresh/upgrade local Wrangler migrations passed, prior canonical records checksum unchanged, rerun no-op, FK empty and local read-only SQLite integrity ok. No remote schema operation. POP contract tests use isolated D1/workerd, not production. Customer contact retention/customer accounts remain later scope.

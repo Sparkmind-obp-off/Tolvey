@@ -6,6 +6,12 @@ export type Bindings = {
   APP_ENV?: string;
   TRANSACTION_CORE_ENABLED?: string;
   TRANSACTION_CORE_TOKEN?: string;
+  DUITKU_POP_ENABLED?: string;
+  DUITKU_ENV?: string;
+  DUITKU_MERCHANT_CODE?: string;
+  DUITKU_API_KEY?: string;
+  DUITKU_CALLBACK_URL?: string;
+  DUITKU_RETURN_URL?: string;
 };
 
 export type AppContext = {

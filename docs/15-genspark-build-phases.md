@@ -193,6 +193,16 @@ Gate:
 - verified sandbox payment completes end-to-end
 - duplicate/invalid/mismatched callbacks are handled safely
 
+### Phase 3 execution evidence — 2026-10-01
+
+Latest explicit command authorizes Phase 3 only and forbids production deployment/Phase 4. Baseline main `7a3b80163b6fd6e65271a4e9b6a00c363ffceb3c` confirmed clean/matching remote. Phase 2 remains complete, not restarted.
+
+Status: CODE COMPLETE / SANDBOX BLOCKED, with final Git delivery evidenced by report/history. 220 tests including 70 POP contract tests, typecheck/format/build (~62.73 kB), fresh/upgrade migration 0004, immutable 0001–0003, preserved canonical records, FK/integrity and compiled workerd callback success/failure/duplicate/invalid behavior verified using strict stubs. Adapter/config/gateway/provider audit/minimum callback and neutral return implemented; no new dependencies, no production payment or actual delivery.
+
+Current official HMAC formulas used, not obsolete SDK signatures. Unsigned callback status/reference require extra common status API verification; actual POP-project interoperability must be proven live. Credential shared through chat/upload is not reused/read; no rotated approved runtime key is available. Evidence is LOCAL CONTRACT TEST ONLY, never DUITKU SANDBOX VERIFIED.
+
+Next session remains Phase 3: rotated sandbox secrets, approved reachable non-production HTTPS callback/return origin and isolated DB, then live POP payment/callback/status/retry evidence. Keep production disabled and preserve deployment identity. No Phase 4 authorization until the live gate is satisfied.
+
 ## Phase 4 — Product-to-Commerce Loop
 Build:
 - real product offer
