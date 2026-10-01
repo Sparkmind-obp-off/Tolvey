@@ -3,6 +3,14 @@
 Status: canonical target workflow; **specification, not newly implemented capability**.
 Updated: 2026-10-01. Audit baseline: `d73a4dfba04c8207f2b5f440e0052840cefdfc3d`.
 
+## Public/private architecture companion — 2026-10-01
+
+[40 — Public Commerce & Private Operations](40-public-commerce-and-private-operations.md) deepens this workflow without changing the three-engine strategy or canonical model. Public commerce consists of anonymous storefront, protected customer experience and authenticated machine ingress; internal control consists of operator publication/commerce/support, distribution/demand management and reliability. Internal management produces public listings/content/approved outbound destinations; it is not another product database.
+
+Recommended initial deployment: existing modular Hono/Pages with explicit namespaces, BYOK Access/MFA-backed verified operator identity plus app permissions, guest customer ownership and private R2. Same deployment is logical separation, not full blast-radius isolation; dedicated internal/consumer Workers are conditional future components. Resend is a transactional-email candidate, Sentry requires compatibility/privacy review (current repo has no nodejs_compat), Queues/Workflows depend on actual durable-work need. No providers/resources configured by this design.
+
+Business/legal review is separate from technical launch: owned domain/seller disclosures, applicable PSE/PMSE/PDP and licensing/tax evidence, no certified/registered claim. docs/40 supplies source register, roles/routes/failure matrix and target acceptance. Full payment gate and all production guards below remain unchanged.
+
 ## 1. Authority and outcome
 
 Strategy: [39](39-vision-mission-north-star.md). Commercial model: [34](34-commercial-architecture-master.md). Audit/backlog/engineering gates: [15](15-genspark-build-phases.md). Execution prompt: [16](16-master-system-prompt-genspark.md).

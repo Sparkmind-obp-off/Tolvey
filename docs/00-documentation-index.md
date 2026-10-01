@@ -7,10 +7,10 @@ This directory is the canonical documentation system for TOLVEY.
 Current authority and efficient reading order (2026-10-01):
 1. README current documentation/code-release distinction.
 2. docs/39 strategy and docs/34 three-engine commercial architecture.
-3. docs/19 master full-system workflow; docs/15 audit/gap/dependency/backlog.
+3. docs/19 master full-system workflow; docs/40 public commerce/private control-plane boundaries and provider/security choices; docs/15 audit/gap/dependency/backlog.
 4. docs/16 bounded execution/session contract; affected subsystem specs and source/tests.
 
-Read all documents for a requested repository-wide audit; normal build continuations read relevant changes/contracts, not all 40 files again. docs/28 is archived completed Phase 2 context. Timestamped historical sections preserve what was true then, not current execution commands.
+Read all documents for a requested repository-wide audit; normal build continuations read relevant changes/contracts, not the entire documentation set again. docs/28 is archived completed Phase 2 context. Timestamped historical sections preserve what was true then, not current execution commands.
 
 Topic reference order (not a mandatory reread every session):
 1. Brand and positioning
@@ -77,6 +77,7 @@ Topic reference order (not a mandatory reread every session):
 | 37 | Marketplace Listing Standard | Channel listing standard |
 | 38 | Distribution Operations & Attribution | Distribution operations/measurement |
 | 39 | Vision, Mission & North Star | Strategic authority |
+| 40 | Public Commerce & Private Operations Architecture | Target trust surfaces, internal control, stack/providers, reliability/legal review; Word export |
 
 ## Status vocabulary
 
@@ -106,7 +107,9 @@ Current state:
 - Phase 7 — Production Validation: planned; separate controlled payment/delivery release authorization required. Does not require every channel or an advanced dashboard first.
 - Phase 8 — Optimization: planned
 
-Latest audit coverage: all **40 docs 00–39**, with per-document disposition, 15 prioritized gaps and bounded next objectives in docs/15. This documentation-only delivery does not redeploy code, change secrets/DNS, or execute Phase 4. Deployed source remains `d73a4df`; later doc commit SHA is not the deployed artifact.
+Current documentation set: **41 Markdown documents, 00–40**. docs/40 and its [editable Word export](exports/TOLVEY_Public_Private_Architecture_2026-10-01.docx) / [PDF](exports/TOLVEY_Public_Private_Architecture_2026-10-01.pdf) specify public/private architecture; proposed controls/providers are not implemented or certified. No new access rules or deployment changes made.
+
+Prior audit coverage: all **40 docs 00–39**, with per-document disposition, 15 prioritized gaps and bounded next objectives in docs/15. This documentation-only delivery does not redeploy code, change secrets/DNS, or execute Phase 4. Deployed source remains `d73a4df`; later doc commit SHA is not the deployed artifact.
 
 ## Documentation change rule
 

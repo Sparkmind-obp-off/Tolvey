@@ -1,5 +1,15 @@
 # 15 — Genspark Build Phases & Session Strategy
 
+## Public/private design extension — 2026-10-01
+
+Latest request is deeper architecture/documentation only, baseline `bed6200`; no code/deploy/payment/access-rule execution. New docs/40 separates public storefront, protected customer area, machine ingress and private ops/control, with internal distribution/demand management and public outputs. Includes operator identity/MFA/action permissions, origin-bypass protection, safe outbound registry, R2/email/recovery, conditional outbox/consumer Worker and monitoring/legal-readiness decisions. It preserves the 0–8 phases and provider gate.
+
+Next publication-to-page slice must include **verified operator identity + action permission + publication audit + origin/path bypass tests**, not just a hidden dashboard. Next customer slice separately scopes customer session/recovery. One minimal ops surface first; enterprise-grade appearance is not reason to build every internal module before public customer value.
+
+Deployment: one modular existing Hono/Pages app first, logically separated namespaces; physically separate ops/consumer Workers only when identity/team/async/reliability needs justify it, through a separate authorized BYOK release. No new providers/accounts/resources assumed. Gate order: identity/publication/page → customer checkout → verified payment/private delivery → operator exceptions/recovery and authorized release. Distribution/demand records remain manual-first; output listings/content remain public.
+
+Legal/business readiness is a distinct owner evidence register (PSE/PMSE/PDP, entity/licensing/tax/support/disclosures), not presumed from payment auth or custom domain. docs/40 details recommendations, sources and test requirements. Earlier 40-doc coverage and test evidence below are historical; current set has 41 Markdown docs plus Word export.
+
 ## Current execution authority — system audit, 2026-10-01
 
 This section supersedes conflicting **future execution order/session advice** below, not historical facts or unmet payment gates. Master full-cycle specification: [19](19-full-stack-system-architecture.md). Copyable session prompts: [16](16-master-system-prompt-genspark.md). Strategy remains docs/39 and docs/34.

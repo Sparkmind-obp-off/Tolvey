@@ -20,7 +20,7 @@ Free/discovery, reusable digital products and human services are offering tiers,
 For a new repository-wide audit, read all documents and inspect implementation. Do **not** repeat the entire audit for every build session.
 
 For a normal continuation:
-- Read README, docs/00, relevant current sections of docs/15, and docs/19 master workflow.
+- Read README, docs/00, relevant current sections of docs/15, and docs/19 master workflow; read docs/40 when designing public/customer/internal surfaces, permissions, outbound traffic or provider/operational additions.
 - Consult docs/39 and docs/34 when business scope changes; preserve their three-engine authority.
 - Read affected contracts/security/data/tests/source before editing. Read docs/14 for payment work, docs/21–23 for API/data/integration work, docs/10/27 for operations/metrics.
 - Inspect Git status/HEAD/remote and changed files. Historical evidence is not a current instruction. docs/28 is an archived completed Phase 2 prompt, not a request to rebuild Phase 2.
@@ -38,6 +38,14 @@ At the 2026-10-01 audit baseline `d73a4dfba04c8207f2b5f440e0052840cefdfc3d`:
 - Existing live site https://webapp-3-38j.pages.dev; intended `tolvey.biz.id` unconfigured.
 
 Always verify current repo before assuming the baseline still applies. Never treat a health/readiness 200 or `DUITKU_POP_ENABLED=true` as permission to process payments.
+
+## Public/private boundary contract
+
+Follow docs/40: public storefront is not the operator dashboard; protected customer order/access belongs to customer experience, not anonymous access or ops authority. Provider ingress uses provider authentication, not a human login. Internal distribution/demand controls produce public listings/content/approved destination links; maintain one canonical domain truth.
+
+Every new route/view declares surface, principal, action/record ownership, data class, cache policy, allowed host/origin, failure behavior and audit. Hidden menu/noindex/subdomain is not authorization. Initial ops recommendation is BYOK Cloudflare Access verified identity/MFA-capable IdP plus app permissions; no Hosted route-descriptor changes or frontend access imitation. Never expose diagnostic bearer to dashboard JavaScript. Guest identity remains separate.
+
+Provider additions require purpose, owner, plan/budget/account, compatibility/privacy, environment/test, failure/recovery and exit gate. No blind Sentry install requiring nodejs_compat, no Pages queue-consumer assumption, no automatic invoice retry via queue/Workflow. Public official-commerce/legal obligations are evidence-reviewed separately; no certification/registered seller claim without proof. docs/40 is target specification, not implemented permission to deploy/provision.
 
 ## Mandatory session input
 

@@ -106,6 +106,12 @@ Decision: replace broad master prompt with objective/input/output/acceptance/env
 Reason: repeatedly reading 40 docs and probing unchanged credentials spends effort without closing product-to-customer dependencies.
 Trade-off: audits still read all docs when requested; ordinary continuation must inspect changed relevant source/contracts, not skip safety. One phase can span sessions; no public A/B/C subdivisions or invented credit guarantees. Current session changes docs only and does not authorize Phase 4 code/deploy/payment. Affected: 00, 15–16, 28, README.
 
+### D-012 — Public commerce and private control plane, shared canonical truth (2026-10-01)
+Decision: docs/40 is the target public/private surface architecture; preserve three business engines and existing core. Public anonymous storefront, protected customer orders/access and authenticated machine callbacks are separate trust surfaces; private operations manages publication/commerce/support/distribution/demand/reliability, producing public listings/content.
+Evidence/context: baseline `bed6200` documents integrated workflow but no ops/customer identity UI; code `d73a4df` is foundation/local core/production connection only. Official Access, Pages bindings, Queues, Workflows, Resend, telemetry and Indonesian PSE/PMSE/PDP references reviewed; legal applicability/account plans not certified.
+Trade-off: one modular Hono/Pages deployment with explicit namespaces and operator identity/action permissions first, acknowledging shared-runtime blast radius. Physical internal/consumer Worker separation only on demonstrated need and explicit BYOK release. First-party guest customer ownership separate from operator Access; no customer login forced through ops. Private R2/email/monitoring fill real needs; no framework rewrite, default SaaS inventory or speculative automation.
+Scope: documentation + Word export only; no code/config/schema/access-rule/secret/deploy/DNS/payment changes. Proposed providers/permissions/routes are not implemented. No PSE/perizinan/compliance status fabricated. Affected: README, 00, 09, 15, 16, 19, new40.
+
 ## Change rule
 
 Any change to brand, business model, or core architecture requires a written decision with context, evidence, decision, trade-offs, affected documents, and date.

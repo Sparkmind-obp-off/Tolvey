@@ -4,7 +4,20 @@
 
 **ONE PRODUCT, MANY DOORS:** one canonical product source → many distribution channels → one normalized transaction model → one operational truth. Own Shop, Distribution, and Brand/Demand remain the three business engines; this release does not re-architect them.
 
-## Latest documentation delivery — full-system audit and build workflow
+## Latest design delivery — public commerce and private operations
+
+New [Public Commerce & Private Operations Architecture](docs/40-public-commerce-and-private-operations.md), Indonesian specification v1.0 (2026-10-01), baseline `bed6200`. Editable [Word export](docs/exports/TOLVEY_Public_Private_Architecture_2026-10-01.docx) and [rendered PDF](docs/exports/TOLVEY_Public_Private_Architecture_2026-10-01.pdf) accompany the canonical Markdown. Exports contain 14 main sections, 9 tables and an official-source register; PDF rendered to 14 A4 pages.
+
+- Separate anonymous storefront, ownership-protected customer checkout/order/access, provider-authenticated ingress and private operations/control plane; **one shared canonical truth**.
+- Distribution/demand planning, evidence, budgets and orchestration are internal; external listings, content and approved traffic destinations remain public outputs. Includes safe outbound-link registry, no open redirects or customer/token leakage.
+- Proposed operator Access/MFA/permissions, private R2, transactional email candidate, monitoring/recovery and conditional outbox/queue/workflow; existing Hono/D1/Duitku stack retained. Additional providers are recommendations, not installed/approved accounts.
+- Production baseline vs enterprise evolution, failure isolation, layer acceptance matrix and Indonesian business/PSE/PMSE/PDP review register. Public storefront is not the legal classification PSE Lingkup Publik; no registration/certification asserted.
+
+**Documentation/design only:** no application, dependency, schema, access-policy, secret, DNS, resource or deployment change. Production payment execution remains disabled; all prior gates preserved. Recommended next build remains one real candidate + controlled internal publication consumed by a safe public product page, with operator identity/permissions explicitly included.
+
+Current design-delivery validation: local Markdown references/fences, Word ZIP/XML/heading/table integrity, rendered PDF text/section checks, typecheck/format/build and **5/5 repository safety tests passed**. Application/config/schema/dependencies/tests remain byte-identical to baseline; Worker SHA256 unchanged. Full 237-test suite not rerun; no new live provider or legal/account-approval evidence claimed.
+
+## Prior documentation delivery — full-system audit and build workflow
 
 Updated 2026-10-01 against code baseline `d73a4dfba04c8207f2b5f440e0052840cefdfc3d`. Reviewed all **40 documents (00–39)** against implementation/config/schema/test boundaries and prior deployment evidence. This delivery changes documentation only; it does not implement Phase 4 or activate commerce.
 
