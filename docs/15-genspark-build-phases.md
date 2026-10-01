@@ -237,6 +237,12 @@ Latest request requires uploaded file → read/parse → real provider request �
 
 Primary status under the newest request: **DUITKU CREDENTIAL / PROJECT BLOCKED**. Current regression: 220/220 tests, typecheck/format/build pass; no runtime/schema/dependency change. Standalone gateway diagnostic stopped during isolated D1 startup and is not full-order evidence. Provider acceptance precondition failed, so secrets/new BYOK deploy/live callback NOT performed. Full direct-execution evidence, limitations, security scans and Git delivery are in docs/14. Resolve active sandbox project/matching rotated key through secure input before continuing the same Phase 3. **Phase 4 NOT AUTHORIZED / not started.**
 
+### Phase 3 credential-environment correction — 2026-10-01
+
+User clarified that supplied credentials are production and authorized direct production connection checks. Current production authentication evidence: correct POP signature with empty body → HTTP 400 required amount validation; altered-signature negative control → HTTP 401 Unauthorized; common read-only status query for nonexistent order → HTTP 404 transaction not found. Official production contracts/source HMAC matched. This supersedes the blanket credential/project-blocked conclusion: earlier merchant-not-found applies to sandbox only. See docs/14 for UTC times and sources.
+
+Current status: **PRODUCTION CREDENTIAL AUTHENTICATION VERIFIED — PAYMENT / DEPLOYMENT UNVERIFIED**. No invoice/payment/callback, remote mutation, secret installation or deploy occurred. Runtime remains sandbox-only; local/test guards are not bypassed. Original sandbox end-to-end gate remains incomplete, and any production runtime/payment activation needs a reviewed release scope rather than treating auth probes as payment success. Key exposed in chat should be rotated before activation. **Phase 4 NOT AUTHORIZED / not started.**
+
 ## Phase 4 — Product-to-Commerce Loop
 Build:
 - real product offer

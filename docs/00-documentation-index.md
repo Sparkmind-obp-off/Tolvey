@@ -91,7 +91,7 @@ Current state:
 - Phase 0 — Audit: complete
 - Phase 1 — Foundation: complete
 - Phase 2 — Transaction Core: COMPLETE within the latest provider-neutral local/test continuation gate; 150 tests, atomic lifecycle, expiry/cancel, fulfillment retry and refund-request representation verified. Git delivery evidence is in the final session report. No production commerce/provider/delivery readiness is claimed.
-- Phase 3 — Duitku POP: DUITKU CREDENTIAL / PROJECT BLOCKED; latest upload found/read/parsed/USED for real POP sandbox requests, with HTTP 400 merchant not found. Latest attachment matches preceding upload. Official wire contract/source HMAC rechecked; 220 regression tests pass. No invoice/payment/callback, secret installation or new deployment. Timestamped direct-execution evidence and remaining deployment/authorization gaps: docs/14. No production payment or Phase 4 authorization.
+- Phase 3 — Duitku POP: PRODUCTION CREDENTIAL AUTHENTICATION VERIFIED / PAYMENT-DEPLOYMENT UNVERIFIED. User clarified production credentials; real correct-signature POP probe reached required-amount validation, wrong-signature control returned 401; read-only production status returned transaction not found. Previous merchant-not-found applies to sandbox, not an invalid-production-key conclusion. Runtime remains sandbox-only; original sandbox end-to-end gate incomplete. No invoice/payment/callback, secret installation, new deploy or Phase 4. Current correction and scope: docs/14. Previous 220-test result is local/historical, not production-payment evidence.
 - Phase 4 — Product-to-Commerce Loop: planned
 - Phase 5 — Distribution: planned
 - Phase 6 — Observability & Security Hardening: planned

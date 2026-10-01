@@ -1,6 +1,24 @@
 # 14 — Duitku POP Integration Architecture
 
-## Direct file execution — 2026-10-01
+## Production environment correction — 2026-10-01
+
+Current status: **PRODUCTION CREDENTIAL AUTHENTICATION VERIFIED — PAYMENT / DEPLOYMENT UNVERIFIED**. User explicitly clarified that the supplied file contains live production credentials and authorized production connection checks. Baseline main `cf53f2af5554ee1276563a7bb248d1114b046c6e`. The earlier sandbox merchant-not-found result remains a truthful observation for that environment, not a declaration that the production credential pair/project is invalid.
+
+Official contracts rechecked: https://docs.duitku.com/pop/id/ and https://docs.duitku.com/api/id/ (both HTTP 200). POP production endpoint `https://api-prod.duitku.com/api/merchant/createInvoice`; common read-only status endpoint `https://passport.duitku.com/webapi/api/merchant/transactionStatus`. Documented HMAC-SHA256, three POP headers and epoch-ms example matched source. No obsolete signature fallback.
+
+Latest uploaded file was read again in memory and mapped to existing names. Source Web Crypto HMAC independently matched Node HMAC. Real production checks, with TLS enabled, bounded response/timeouts, secrets sent only via curl stdin and no raw bodies retained:
+
+| UTC time | Non-transactional check | Observed result |
+| --- | --- | --- |
+| 2026-10-01T09:44:41Z | POP POST, correct signed headers, deliberately empty body | HTTP 400 required paymentAmount validation; no merchant-not-found/unauthorized classification |
+| 2026-10-01T09:44:42Z | Same POP request, deliberately altered signature negative control | HTTP 401 Unauthorized |
+| 2026-10-01T09:44:42Z | Common production transactionStatus query, random nonexistent order ID, correct signature | HTTP 404 transaction not found |
+
+The positive/negative signature contrast supports acceptance of the uploaded pair at the **production POP authentication layer**. This is NOT a created invoice, channel eligibility/activation proof, production payment, callback verification, status compatibility for a real POP order or deployment readiness. No amount/order/invoice/payment created and no production transaction attempted. No remote migration, secret installation, deploy, DNS change or Phase 4 work. Existing gateway/config remain local/test + sandbox-only; never spoof local/test on a production deployment or feed production keys into sandbox-enabled runtime.
+
+The old blanket credential/project-blocked status is superseded. Original sandbox end-to-end gate is still incomplete and needs sandbox credentials if retained; moving the application to production requires explicit release review of adapter/environment/private initiation/D1/callback/security/authorization and controlled real-transaction scope. Key exposed in chat should be rotated before production activation. This correction changes evidence only, not runtime or architecture. Prior 220-test result is historical; no full regression rerun claimed for this documentation-only correction. Formatting, secret-value scan and clean pushed-main evidence are reported after execution.
+
+## Historical direct file execution — 2026-10-01
 
 Primary status: **DUITKU CREDENTIAL / PROJECT BLOCKED**. Baseline main `c923f5268b5c195379b9e8102fc164a5c5755660`. Same Phase 3, no Phase 4.
 
