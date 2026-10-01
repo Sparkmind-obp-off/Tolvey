@@ -39,11 +39,14 @@ export async function verifyDuitkuSchema(db: D1Database) {
 /** Privileged internal sandbox gateway; no public initiation API. Factory fails closed. */
 export function duitkuGateway(
   env: Bindings,
-  transport: typeof fetch = fetch,
+  transport: typeof fetch = (input, init) => globalThis.fetch(input, init),
   clock: () => Date = () => new Date(),
 ) {
   const config = duitkuConfig(env),
     db = env.DB!;
+  // Production credentials are deployed for connection checks only, not live commerce activation.
+  if (config.environment === 'production')
+    throw new DuitkuError('PAYMENT_EXECUTION_DISABLED', 503);
   const adapter = new DuitkuPop(config, db, transport, clock);
   const core = createPaymentCore(db, env.APP_ENV!);
   const invoice = (id: string) =>

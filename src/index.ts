@@ -13,7 +13,7 @@ import type { AppContext } from './types';
 import transactionRoutes, { coreAvailable } from './transaction-api';
 import { verifyTransactionSchema } from './transaction-store';
 import duitkuRoutes from './duitku-api';
-import { duitkuConfig } from './duitku-config';
+import { duitkuConfig, duitkuOperatorAvailable } from './duitku-config';
 import { verifyDuitkuSchema } from './duitku-gateway';
 
 const app = new Hono<AppContext>();
@@ -57,10 +57,14 @@ app.use('*', async (c, next) => {
   const isProviderCallback =
     c.req.method === 'POST' &&
     c.req.path === '/api/provider/duitku-pop/callback';
+  const isProviderConnectionCheck =
+    c.req.method === 'POST' &&
+    c.req.path === '/api/provider/duitku-pop/connection/check';
   if (
     !['GET', 'HEAD', 'OPTIONS'].includes(c.req.method) &&
     !isCheckoutWrite &&
-    !isProviderCallback
+    !isProviderCallback &&
+    !isProviderConnectionCheck
   ) {
     c.header('Allow', 'GET, HEAD, OPTIONS');
     return c.json(
@@ -94,8 +98,11 @@ app.get('/ready', async (c) => {
       await verifyTransactionSchema(c.env.DB);
     }
     if (c.env.DUITKU_POP_ENABLED === 'true') {
-      duitkuConfig(c.env);
-      await verifyDuitkuSchema(c.env.DB);
+      const provider = duitkuConfig(c.env);
+      if (provider.environment === 'production') {
+        if (!duitkuOperatorAvailable(c.env)) throw new Error('Not configured');
+        // Production connection deployment does not activate commerce or need transaction migrations.
+      } else await verifyDuitkuSchema(c.env.DB);
     }
     return c.json({ status: 'ready' });
   } catch {

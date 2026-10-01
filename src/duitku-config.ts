@@ -1,14 +1,26 @@
 import type { Bindings } from './types';
 
+export interface ConnectionDiagnostic {
+  signed_http?: number;
+  control_http?: number;
+  amount_validation?: boolean;
+  transport_failed?: boolean;
+  transport_failure_kind?:
+    'native_receiver' | 'timeout' | 'fetch_option' | 'unverified';
+  checked_at: string;
+}
+
 export class DuitkuError extends Error {
   constructor(
     public code: string,
     public status: 400 | 401 | 404 | 409 | 413 | 503 = 400,
+    public diagnostic?: ConnectionDiagnostic,
   ) {
     super(code);
   }
 }
 export interface DuitkuConfig {
+  environment: 'sandbox' | 'production';
   merchantCode: string;
   apiKey: string;
   callbackUrl: string;
@@ -16,9 +28,12 @@ export interface DuitkuConfig {
 }
 export function duitkuConfig(env: Bindings): DuitkuConfig {
   if (
-    !['local', 'test'].includes(env.APP_ENV ?? '') ||
+    !(
+      (['local', 'test'].includes(env.APP_ENV ?? '') &&
+        env.DUITKU_ENV === 'sandbox') ||
+      (env.APP_ENV === 'production' && env.DUITKU_ENV === 'production')
+    ) ||
     env.DUITKU_POP_ENABLED !== 'true' ||
-    env.DUITKU_ENV !== 'sandbox' ||
     !env.DB
   )
     throw new DuitkuError('PAYMENT_UNAVAILABLE', 503);
@@ -58,12 +73,40 @@ export function duitkuConfig(env: Bindings): DuitkuConfig {
   if (callback.origin !== returned.origin)
     throw new DuitkuError('PAYMENT_UNAVAILABLE', 503);
   return {
+    environment: env.DUITKU_ENV as 'sandbox' | 'production',
     merchantCode: env.DUITKU_MERCHANT_CODE,
     apiKey: env.DUITKU_API_KEY,
     callbackUrl: callback.href,
     returnUrl: returned.href,
   };
 }
+// Connection checks use a separate server-only operator secret, never the provider key.
+export function duitkuOperatorAvailable(env: Bindings): boolean {
+  return (
+    typeof env.DUITKU_OPERATOR_TOKEN === 'string' &&
+    env.DUITKU_OPERATOR_TOKEN.length >= 32 &&
+    env.DUITKU_OPERATOR_TOKEN.length <= 256
+  );
+}
+
+export function duitkuEndpoints(config: DuitkuConfig) {
+  if (config.environment === 'production')
+    return {
+      create: 'https://api-prod.duitku.com/api/merchant/createInvoice',
+      status:
+        'https://passport.duitku.com/webapi/api/merchant/transactionStatus',
+      paymentOrigin: 'https://app-prod.duitku.com',
+    };
+  if (config.environment === 'sandbox')
+    return {
+      create: 'https://api-sandbox.duitku.com/api/merchant/createInvoice',
+      status:
+        'https://sandbox.duitku.com/webapi/api/merchant/transactionStatus',
+      paymentOrigin: 'https://app-sandbox.duitku.com',
+    };
+  throw new DuitkuError('PAYMENT_UNAVAILABLE', 503);
+}
+
 export async function hmacSha256(
   message: string,
   secret: string,

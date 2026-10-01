@@ -10,6 +10,7 @@ export type Bindings = {
   DUITKU_ENV?: string;
   DUITKU_MERCHANT_CODE?: string;
   DUITKU_API_KEY?: string;
+  DUITKU_OPERATOR_TOKEN?: string;
   DUITKU_CALLBACK_URL?: string;
   DUITKU_RETURN_URL?: string;
 };

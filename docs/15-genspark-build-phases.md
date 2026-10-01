@@ -243,6 +243,12 @@ User clarified that supplied credentials are production and authorized direct pr
 
 Current status: **PRODUCTION CREDENTIAL AUTHENTICATION VERIFIED — PAYMENT / DEPLOYMENT UNVERIFIED**. No invoice/payment/callback, remote mutation, secret installation or deploy occurred. Runtime remains sandbox-only; local/test guards are not bypassed. Original sandbox end-to-end gate remains incomplete, and any production runtime/payment activation needs a reviewed release scope rather than treating auth probes as payment success. Key exposed in chat should be rotated before activation. **Phase 4 NOT AUTHORIZED / not started.**
 
+### Phase 3 production connection implementation/deploy — 2026-10-01
+
+Latest user explicitly requested implementation, secure secret storage and CF BYOK deployment rather than more documentation-only checks. Delivered bounded production connection release: matching-environment config/official endpoint selection, private operator-authenticated non-creating connection check, actual-provider response parsing and native global fetch receiver fixes, Cloudflare Pages production secrets installed from uploaded execution file/stdin, real deployment to existing `webapp-3`. Deployed Worker connection returned HTTP 200 authentication verified; health/readiness/catalog/return 200, unauthenticated check 401, production callback/checkpoint 503. Exact URL, final regression/security and committed-main delivery: docs/14/session report.
+
+**DEPLOYED — PRODUCTION CONNECTION VERIFIED**, not a paid transaction or complete original sandbox end-to-end gate. Transaction execution remains closed; immutable migrations/core untouched, no remote transaction migrations/fixtures, no DB/frontend credentials, no DNS/new-project change. Provider/operator keys are Cloudflare Secrets; rotate chat-exposed provider key before real payments. Brand/distribution architecture not changed. **Phase 4 NOT STARTED.**
+
 ## Phase 4 — Product-to-Commerce Loop
 Build:
 - real product offer

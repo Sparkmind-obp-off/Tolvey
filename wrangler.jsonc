@@ -3,7 +3,14 @@
   "name": "webapp-3",
   "pages_build_output_dir": "./dist",
   "compatibility_date": "2026-04-15",
-  "vars": { "APP_ENV": "production" },
+  "vars": {
+    "APP_ENV": "production",
+    "TRANSACTION_CORE_ENABLED": "false",
+    "DUITKU_POP_ENABLED": "true",
+    "DUITKU_ENV": "production",
+    "DUITKU_CALLBACK_URL": "https://webapp-3-38j.pages.dev/api/provider/duitku-pop/callback",
+    "DUITKU_RETURN_URL": "https://webapp-3-38j.pages.dev/payments/duitku-pop/return"
+  },
   "d1_databases": [
     {
       "binding": "DB",

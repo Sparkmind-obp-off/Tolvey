@@ -36,7 +36,7 @@ Authorization/configuration: `DB`, explicit non-production APP_ENV, `TRANSACTION
 - GET `/api/transaction-core/checkouts/:id`; GET `/api/transaction-core/orders/:id`: protected snapshots/status; malformed UUID 400, nonexistent 404. Private delivery/customer reference, key/hash and version metadata are excluded from DTOs.
 - 503 `TRANSACTION_CORE_UNAVAILABLE` when disabled/incomplete/production; 401 `UNAUTHORIZED`; malformed/body/content/type/key input 400; unavailable offer 404; oversized body 413; generic unexpected error 500. Error shape `{ error, message, request_id }`, no SQL/provider/credential details.
 - `/ready` retains default foundation behavior and adds transaction-schema/config probes when the flag is true.
-- GET/HEAD/OPTIONS conventions stay intact; the exact checkpoint create POST bypasses the global mutation barrier; Phase 3 adds only the authenticated provider callback exception described below. Other mutation paths still return 405. No payment-confirmation/fulfillment/arbitrary transition mutation route exists.
+- GET/HEAD/OPTIONS conventions stay intact; the exact checkpoint create POST bypasses the global mutation barrier; Phase 3 adds authenticated provider callback and private operational connection-check exceptions described below. Other mutation paths still return 405. No payment-confirmation/fulfillment/arbitrary transition mutation route exists.
 
 Expiry/cancellation/payment/fulfillment capabilities are implemented as internal functions only (below), not HTTP routes. Expiry is explicit, not scheduled; initiation/confirmation reject overdue orders regardless of sweep. Stable transaction reference is provider-neutral; real provider constraints/authentication remain Phase 3.
 
@@ -98,7 +98,16 @@ Breaking public contract changes require a documented migration/version strategy
 ## 10. Current status
 Foundation reads, protected non-production checkout/order API and internal local/test lifecycle are implemented and verified (150 tests). Phase 2 continuation gate is complete, subject to final Git delivery. Public customer checkout is not implemented. The Phase 3 sandbox adapter below verifies contract/authentication locally; live provider verification remains blocked. Transaction migrations/services have not been deployed or migrated remotely.
 
-## Phase 3 sandbox provider boundary — 2026-10-01
+## Phase 3 production connection release — 2026-10-01
+
+The latest user request authorizes production credential installation and BYOK application deployment, not paid commerce. Existing project `webapp-3` now deploys explicit production provider configuration with Cloudflare Secrets. Production gateway/checkpoint execution stays disabled; canonical migrations/core unchanged. Sandbox code below remains local/test-only.
+
+- POST `/api/provider/duitku-pop/connection/check`: server-only operator bearer `DUITKU_OPERATOR_TOKEN` (32–256 chars), separate from provider credentials. Enabled/matching provider environment + DB + config required. Missing/wrong auth 401 with no provider network call. Neither body nor query controls provider URL, amount, order or credentials. Operational business/API authorization, not Hosted site admission.
+- Two deliberately empty production POP requests: correct HMAC must get required-amount validation HTTP 400; changed signature control must return 401. No valid invoice payload or canonical data mutation. Success HTTP 200 `{data:{environment:"production",authentication:"verified",invoice_created:false,payments_enabled:false}}`. Failure 503 with only bounded operator diagnostics (HTTP statuses, boolean flags, timestamp, static cause); raw provider response/errors/secrets excluded.
+- `/ready` for this production connection release checks foundation schema + provider config + operator-secret presence; it does not send provider traffic or claim payment readiness. Sandbox readiness still probes all four migrations. Default public status page remains honest about unavailable buying/delivery.
+- Production callback and transaction checkpoint POSTs remain 503. No public initiation/payment/fulfillment route. Neutral return remains 200 and cannot confirm payment. Actual deployed connection HTTP 200 verified through real provider calls; no paid order/callback/delivery claimed. See docs/14 for evidence/secret contract.
+
+## Historical Phase 3 sandbox provider boundary — 2026-10-01
 
 Status: CODE COMPLETE / SANDBOX BLOCKED; LOCAL CONTRACT TEST ONLY. See docs/14 for exact wire formulas and unverified live prerequisites.
 

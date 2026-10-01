@@ -8,9 +8,11 @@ import { getOrder, type OrderRecord } from './transaction-store';
 import {
   boundedText,
   DuitkuError,
+  duitkuEndpoints,
   equalSignature,
   hmacSha256,
   type DuitkuConfig,
+  type ConnectionDiagnostic,
 } from './duitku-config';
 
 export interface PopResult {
@@ -74,12 +76,15 @@ export function payable(
 }
 
 export class DuitkuPop implements PaymentAdapter {
-  readonly key = 'duitku-pop-sandbox';
+  get key() {
+    return 'duitku-pop-' + this.config.environment;
+  }
   private authenticated = new WeakSet<object>();
   constructor(
     private config: DuitkuConfig,
     private db: D1Database,
-    private transport: typeof fetch = fetch,
+    private transport: typeof fetch = (input, init) =>
+      globalThis.fetch(input, init),
     private clock: () => Date = () => new Date(),
   ) {}
 
@@ -93,7 +98,8 @@ export class DuitkuPop implements PaymentAdapter {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...headers },
         body: JSON.stringify(body),
-        redirect: 'error',
+        // Workers supports manual/follow; reject redirects via status checks, never follow.
+        redirect: 'manual',
         signal: AbortSignal.timeout(10000),
       });
       if (!response.ok)
@@ -118,6 +124,75 @@ export class DuitkuPop implements PaymentAdapter {
       throw new DuitkuError('PROVIDER_UNAVAILABLE', 503);
     }
   }
+  /** Non-creating authentication check; never creates an invoice or touches commerce data. */
+  async checkConnection() {
+    const timestamp = String(this.clock().getTime());
+    const signature = await hmacSha256(
+      this.config.merchantCode + timestamp,
+      this.config.apiKey,
+    );
+    const probe = async (signed: string) => {
+      const response = await this.transport(
+        duitkuEndpoints(this.config).create,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-duitku-merchantcode': this.config.merchantCode,
+            'x-duitku-timestamp': timestamp,
+            'x-duitku-signature': signed,
+          },
+          body: '{}', // No paymentAmount/order/contact: no valid invoice can be created.
+          // Workers supports manual/follow; reject redirects via status checks, never follow.
+          redirect: 'manual',
+          signal: AbortSignal.timeout(10000),
+        },
+      );
+      return {
+        status: response.status,
+        text: await boundedText(response, 16384),
+      };
+    };
+    const diagnostic: ConnectionDiagnostic = {
+      checked_at: this.clock().toISOString(),
+    };
+    try {
+      const valid = await probe(signature);
+      diagnostic.signed_http = valid.status;
+      diagnostic.amount_validation = /\bpayment\s*amount\b/i.test(valid.text);
+      const invalid = await probe(
+        (signature[0] === '0' ? '1' : '0') + signature.slice(1),
+      );
+      diagnostic.control_http = invalid.status;
+      if (
+        valid.status !== 400 ||
+        !diagnostic.amount_validation ||
+        invalid.status !== 401
+      )
+        throw new DuitkuError('PROVIDER_AUTH_UNVERIFIED', 503);
+      return {
+        environment: this.config.environment,
+        authentication: 'verified' as const,
+        invoice_created: false,
+        payments_enabled: false,
+      };
+    } catch (error) {
+      // Static classifications only; never expose exception messages or native receiver details.
+      const message = error instanceof Error ? error.message : '';
+      if (/illegal invocation/i.test(message))
+        diagnostic.transport_failure_kind = 'native_receiver';
+      else if (/abort|timeout/i.test(message))
+        diagnostic.transport_failure_kind = 'timeout';
+      else if (/redirect|AbortSignal/i.test(message))
+        diagnostic.transport_failure_kind = 'fetch_option';
+      else diagnostic.transport_failure_kind = 'unverified';
+      // Never expose body/headers/provider error text or secret-bearing transport exceptions.
+      if (!diagnostic.signed_http || !diagnostic.control_http)
+        diagnostic.transport_failed = true;
+      throw new DuitkuError('PROVIDER_AUTH_UNVERIFIED', 503, diagnostic);
+    }
+  }
+
   async initiate(
     input: Parameters<PaymentAdapter['initiate']>[0],
     email?: string,
@@ -144,7 +219,7 @@ export class DuitkuPop implements PaymentAdapter {
     if (minutes < 1) throw new DuitkuError('ORDER_EXPIRED', 409);
     const timestamp = String(now.getTime());
     const data = await this.post(
-      POP_CREATE_URL,
+      duitkuEndpoints(this.config).create,
       {
         paymentAmount: order.amount_minor,
         merchantOrderId: order.id,
@@ -177,7 +252,7 @@ export class DuitkuPop implements PaymentAdapter {
       throw new DuitkuError('INVALID_PROVIDER_RESPONSE', 503);
     }
     if (
-      url.origin !== 'https://app-sandbox.duitku.com' ||
+      url.origin !== duitkuEndpoints(this.config).paymentOrigin ||
       url.pathname !== '/redirect_checkout' ||
       url.username ||
       url.password ||
@@ -280,7 +355,7 @@ export class DuitkuPop implements PaymentAdapter {
     )
       throw new DuitkuError('REFERENCE_MISMATCH', 409);
     // Callback HMAC does NOT cover resultCode/reference. Never trust those alone.
-    const status = await this.post(STATUS_URL, {
+    const status = await this.post(duitkuEndpoints(this.config).status, {
       merchantCode: this.config.merchantCode,
       merchantOrderId: order.id,
       signature: await hmacSha256(

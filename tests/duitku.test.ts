@@ -165,6 +165,353 @@ async function assertPending(id: string) {
 }
 
 describe('Duitku POP LOCAL CONTRACT TEST ONLY — no live credentials/network', () => {
+  const productionEnv = () => ({
+    ...env,
+    APP_ENV: 'production',
+    DUITKU_ENV: 'production',
+    DUITKU_OPERATOR_TOKEN: 'operator-' + newId(),
+  });
+
+  it('accepts explicit production configuration but keeps production commerce disabled', () => {
+    const configured = productionEnv();
+    expect(duitkuConfig(configured).environment).toBe('production');
+    expect(() => duitkuGateway(configured)).toThrow(
+      'PAYMENT_EXECUTION_DISABLED',
+    );
+    expect(() => createSimulationCore(db, 'production')).toThrow(
+      'SIMULATION_FORBIDDEN',
+    );
+  });
+
+  it.each(['local', 'test', 'staging', 'unknown'])(
+    'never allows production credentials in APP_ENV %s',
+    (APP_ENV) => {
+      expect(() => duitkuConfig({ ...productionEnv(), APP_ENV })).toThrow(
+        'PAYMENT_UNAVAILABLE',
+      );
+    },
+  );
+
+  it('routes production adapter requests and payment URLs only to official production hosts', async () => {
+    const o = await order();
+    const config = duitkuConfig(productionEnv());
+    const network = vi.fn(async (url: unknown) => {
+      expect(url).toBe(
+        'https://api-prod.duitku.com/api/merchant/createInvoice',
+      );
+      return Response.json({
+        merchantCode: config.merchantCode,
+        reference: ref,
+        statusCode: '00',
+        paymentUrl:
+          'https://app-prod.duitku.com/redirect_checkout?reference=' + ref,
+      });
+    });
+    const adapter = new DuitkuPop(
+      config,
+      db,
+      network as unknown as typeof fetch,
+      () => clock,
+    );
+    expect(adapter.key).toBe('duitku-pop-production');
+    const result = await adapter.initiate(
+      {
+        order_id: o.id,
+        transaction_reference: o.transaction_reference,
+        amount_minor: o.amount_minor,
+        currency: o.currency,
+        currency_exponent: o.currency_exponent,
+        idempotency_key: 'prod-contract',
+      },
+      'contract@example.test',
+    );
+    expect(result.payment_url).toContain('https://app-prod.duitku.com/');
+    network.mockImplementation(async () =>
+      Response.json({
+        merchantCode: config.merchantCode,
+        reference: ref,
+        statusCode: '00',
+        paymentUrl:
+          'https://app-sandbox.duitku.com/redirect_checkout?reference=' + ref,
+      }),
+    );
+    await expect(
+      adapter.initiate(
+        {
+          order_id: o.id,
+          transaction_reference: o.transaction_reference,
+          amount_minor: o.amount_minor,
+          currency: o.currency,
+          currency_exponent: o.currency_exponent,
+          idempotency_key: 'prod-contract',
+        },
+        'contract@example.test',
+      ),
+    ).rejects.toMatchObject({ code: 'INVALID_PROVIDER_RESPONSE' });
+  });
+
+  it('checks provider authentication without an invoice, with a signed negative control', async () => {
+    const config = duitkuConfig(productionEnv());
+    const signatures: string[] = [];
+    const network = vi.fn(async (url: unknown, options?: RequestInit) => {
+      expect(url).toBe(
+        'https://api-prod.duitku.com/api/merchant/createInvoice',
+      );
+      expect(options?.body).toBe('{}');
+      const headers = options?.headers as Record<string, string>;
+      signatures.push(headers['x-duitku-signature']);
+      const expected = createHmac('sha256', config.apiKey)
+        .update(config.merchantCode + headers['x-duitku-timestamp'])
+        .digest('hex');
+      if (signatures.length === 1) expect(signatures[0]).toBe(expected);
+      else expect(signatures[1]).not.toBe(expected);
+      return new Response(
+        signatures.length === 1
+          ? 'Payment Amount must be greater than zero'
+          : 'Unauthorized',
+        { status: signatures.length === 1 ? 400 : 401 },
+      );
+    });
+    const result = await new DuitkuPop(
+      config,
+      db,
+      network as unknown as typeof fetch,
+      () => clock,
+    ).checkConnection();
+    expect(result).toEqual({
+      environment: 'production',
+      authentication: 'verified',
+      invoice_created: false,
+      payments_enabled: false,
+    });
+    expect(network).toHaveBeenCalledTimes(2);
+    expect(signatures[0]).not.toBe(signatures[1]);
+    expect(await count('payments')).toBe(0);
+    expect(await count('orders')).toBe(0);
+  });
+
+  it.each([
+    [401, 'Unauthorized', 401],
+    [400, 'merchant not found', 401],
+    [200, 'paymentAmount', 401],
+    [400, 'paymentAmount', 400],
+    [400, 'paymentAmount', 429],
+  ])(
+    'fails closed for unverified auth response %s/%s/%s',
+    async (positive, text, negative) => {
+      let calls = 0;
+      const network = vi.fn(
+        async () =>
+          new Response(String(text), {
+            status: Number(++calls === 1 ? positive : negative),
+          }),
+      );
+      await expect(
+        new DuitkuPop(
+          duitkuConfig(productionEnv()),
+          db,
+          network as unknown as typeof fetch,
+        ).checkConnection(),
+      ).rejects.toMatchObject({
+        code: 'PROVIDER_AUTH_UNVERIFIED',
+        status: 503,
+      });
+    },
+  );
+
+  it('private production connection route refuses missing/wrong operator auth before provider traffic', async () => {
+    const configured = productionEnv();
+    const spy = vi.spyOn(globalThis, 'fetch');
+    for (const header of ['', 'Bearer ' + 'wrong-token-'.repeat(5)]) {
+      const response = await app.request(
+        'https://contract.example/api/provider/duitku-pop/connection/check',
+        { method: 'POST', headers: { Authorization: header } },
+        configured,
+      );
+      expect(response.status).toBe(401);
+    }
+    expect(spy).not.toHaveBeenCalled();
+    const missing = await app.request(
+      'https://contract.example/ready',
+      {},
+      { ...configured, DUITKU_OPERATOR_TOKEN: undefined },
+    );
+    expect(missing.status).toBe(503);
+  });
+
+  it('private production route verifies credentials without exposing keys or mutating D1', async () => {
+    const configured = productionEnv();
+    let calls = 0;
+    const spy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockImplementation(
+        async () =>
+          new Response(
+            ++calls === 1 ? 'paymentAmount must be positive' : 'Unauthorized',
+            { status: calls === 1 ? 400 : 401 },
+          ),
+      );
+    const response = await app.request(
+      'https://contract.example/api/provider/duitku-pop/connection/check',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + configured.DUITKU_OPERATOR_TOKEN,
+        },
+        body: JSON.stringify({ amount: 100, order: 'ignored' }),
+      },
+      configured,
+    );
+    expect(response.status).toBe(200);
+    const text = await response.text();
+    expect(text).toContain('verified');
+    for (const secret of [
+      configured.DUITKU_API_KEY!,
+      configured.DUITKU_MERCHANT_CODE!,
+      configured.DUITKU_OPERATOR_TOKEN,
+    ])
+      expect(text).not.toContain(secret);
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(await count('orders')).toBe(0);
+    expect(
+      (await app.request('https://contract.example/ready', {}, configured))
+        .status,
+    ).toBe(200);
+  });
+
+  it('default provider transport preserves the native global fetch receiver', async () => {
+    let calls = 0;
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async function (
+      this: unknown,
+      _url,
+      options,
+    ) {
+      if (this !== globalThis) throw new TypeError('Illegal invocation');
+      expect(options?.redirect).toBe('manual');
+      calls++;
+      return new Response(
+        calls === 1 ? 'Payment Amount must be positive' : 'Unauthorized',
+        { status: calls === 1 ? 400 : 401 },
+      );
+    });
+    const result = await new DuitkuPop(
+      duitkuConfig(productionEnv()),
+      db,
+    ).checkConnection();
+    expect(result.authentication).toBe('verified');
+    expect(calls).toBe(2);
+  });
+
+  it('private production connection failures expose only bounded diagnostics, never provider bodies/secrets', async () => {
+    const configured = productionEnv();
+    vi.spyOn(globalThis, 'fetch').mockImplementation(
+      async () =>
+        new Response('Denied ' + configured.DUITKU_API_KEY, { status: 403 }),
+    );
+    const response = await app.request(
+      'https://contract.example/api/provider/duitku-pop/connection/check',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + configured.DUITKU_OPERATOR_TOKEN,
+        },
+      },
+      configured,
+    );
+    expect(response.status).toBe(503);
+    const text = await response.text();
+    const result = JSON.parse(text);
+    expect(result.diagnostic).toMatchObject({
+      signed_http: 403,
+      control_http: 403,
+      amount_validation: false,
+    });
+    for (const value of [
+      configured.DUITKU_API_KEY!,
+      configured.DUITKU_MERCHANT_CODE!,
+      configured.DUITKU_OPERATOR_TOKEN,
+    ])
+      expect(text).not.toContain(value);
+    expect(text).not.toContain('Denied');
+  });
+
+  it('runs private production connection route in compiled workerd with strict provider stubs and foundation-only D1', async () => {
+    const configured = productionEnv();
+    const compiled = await build({
+      stdin: {
+        resolveDir: '/home/user/webapp',
+        contents: `
+      let calls=0;
+      globalThis.fetch=async(url,init)=>{if(url!=='https://api-prod.duitku.com/api/merchant/createInvoice'||init.body!=='{}')throw Error('Unexpected provider request');calls++;return new Response(calls%2?'paymentAmount must be positive':'Unauthorized',{status:calls%2?400:401});};
+      export {default} from './src/index';
+    `,
+      },
+      bundle: true,
+      write: false,
+      format: 'esm',
+      platform: 'browser',
+      target: 'es2022',
+    });
+    const worker = new Miniflare(
+      convertV4MiniflareOptions({
+        modules: true,
+        script: compiled.outputFiles[0].text,
+        compatibilityDate: '2026-04-15',
+        d1Databases: ['DB'],
+        bindings: Object.fromEntries(
+          Object.entries(configured).filter(([k]) => k !== 'DB'),
+        ),
+        log: new Log(LogLevel.ERROR),
+      }),
+    );
+    try {
+      const target = (await worker.getD1Database(
+        'DB',
+      )) as unknown as D1Database;
+      await apply('migrations/0001_canonical_catalog.sql', target);
+      expect(
+        (await worker.dispatchFetch('https://contract.example/ready')).status,
+      ).toBe(200);
+      const url =
+        'https://contract.example/api/provider/duitku-pop/connection/check';
+      expect((await worker.dispatchFetch(url, { method: 'POST' })).status).toBe(
+        401,
+      );
+      const response = await worker.dispatchFetch(url, {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + configured.DUITKU_OPERATOR_TOKEN,
+        },
+      });
+      expect(response.status).toBe(200);
+      expect(await response.json()).toEqual({
+        data: {
+          environment: 'production',
+          authentication: 'verified',
+          invoice_created: false,
+          payments_enabled: false,
+        },
+      });
+      expect(
+        (
+          await worker.dispatchFetch(
+            'https://contract.example/api/provider/duitku-pop/callback',
+            { method: 'POST' },
+          )
+        ).status,
+      ).toBe(503);
+      expect(
+        (await target
+          .prepare(
+            "SELECT count(*) AS n FROM sqlite_master WHERE name='orders'",
+          )
+          .first())!.n,
+      ).toBe(0);
+    } finally {
+      await worker.dispose();
+    }
+  });
+
   it('implements HMAC SHA256 RFC4231 vector and independent Node formula cross-check', async () => {
     expect(await hmacSha256('Hi There', '\x0b'.repeat(20))).toBe(
       'b0344c61d8db38535ca8afceaf0bf12b881dc200c9833da726e9376c2e32cff7',
