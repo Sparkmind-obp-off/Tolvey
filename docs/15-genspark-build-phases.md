@@ -231,6 +231,12 @@ Primary status: **SANDBOX VERIFICATION BLOCKED**. Provider-secret installation a
 
 Full timestamped attempt, secret-name contract, regression/security delivery results and unblock actions are in `docs/14-duitku-pop-integration.md`. Uploaded key still requires rotation after chat exposure; confirm an active sandbox project and matching key through a secure channel. **Phase 4 NOT AUTHORIZED.**
 
+### Phase 3 direct file execution — 2026-10-01
+
+Latest request requires uploaded file → read/parse → real provider request → validated secrets/deploy → live verification. First action searched user uploads; latest attachment was read and USED, not substituted or rejected because of its filename/missing environment marker. Baseline main `c923f5268b5c195379b9e8102fc164a5c5755660`; file bytes match preceding upload. Real official POP sandbox probes returned HTTP 400 merchant not found, including official lowercase path signed by existing source HMAC. Official endpoint/headers/timestamp/formula rechecked; no signature/endpoint defect demonstrated. Provider project authentication remains unproven.
+
+Primary status under the newest request: **DUITKU CREDENTIAL / PROJECT BLOCKED**. Current regression: 220/220 tests, typecheck/format/build pass; no runtime/schema/dependency change. Standalone gateway diagnostic stopped during isolated D1 startup and is not full-order evidence. Provider acceptance precondition failed, so secrets/new BYOK deploy/live callback NOT performed. Full direct-execution evidence, limitations, security scans and Git delivery are in docs/14. Resolve active sandbox project/matching rotated key through secure input before continuing the same Phase 3. **Phase 4 NOT AUTHORIZED / not started.**
+
 ## Phase 4 — Product-to-Commerce Loop
 Build:
 - real product offer

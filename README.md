@@ -6,9 +6,9 @@ One canonical product source → many distribution channels → one normalized t
 
 ## Current delivery — PHASE 3 — DUITKU POP
 
-**SANDBOX VERIFICATION BLOCKED** — latest execution 2026-10-01, baseline main `5c515ffc8c5e27a0e2049aa5ba765392b3913f3e`. Existing Phase 3 implementation remains code complete/local-contract verified; the real sandbox payment gate is not complete.
+**DUITKU CREDENTIAL / PROJECT BLOCKED** — latest direct execution 2026-10-01, baseline main `c923f5268b5c195379b9e8102fc164a5c5755660`. Latest uploaded file was found, read, parsed and USED for actual official sandbox POP requests; its bytes match the preceding upload. No stop was caused by file format or missing sandbox marker. Existing Phase 3 implementation remains locally verified; the real sandbox payment/deployment gate is not complete.
 
-With explicit user permission, the execution credential file was parsed in memory. Required input names were detected and mapped to `DUITKU_API_KEY` / `DUITKU_MERCHANT_CODE`; no explicit sandbox marker was present. Real sandbox-only POP authentication probes returned HTTP 400, classified as **merchant not found**, confirmed with independent urllib/curl transports. Authentication success is NOT proven. A common status probe returned HTTP 404 and did not prove POP/status compatibility. Raw provider responses, credentials and signatures were not printed or persisted. The key exposed in chat still requires rotation; do not send replacement secrets in chat.
+Required file fields mapped to `DUITKU_API_KEY` / `DUITKU_MERCHANT_CODE` in execution memory. Latest real POP requests returned **HTTP 400 — merchant not found**, including an additional-fields diagnostic and the official lowercase endpoint example using the existing source HMAC function. Endpoint/header/timestamp/HMAC contract was rechecked against current official docs; existing Web Crypto output matched independent Node HMAC using the uploaded values. This proves formula agreement, NOT provider authentication or a valid key/project. No full invoice/payment/callback succeeded. Earlier common status HTTP 404 remains unverified compatibility evidence. Secrets/signatures/raw responses were not printed or persisted. Rotate the chat-exposed key and confirm the project exists in the sandbox portal; do not send secrets in chat.
 
 Implemented and locally verified:
 - Isolated Duitku POP adapter, fail-closed sandbox config, current official HMAC-SHA256 request/callback signatures and fixed-length verification.
@@ -20,7 +20,7 @@ Implemented and locally verified:
 - Provider-only additive migration 0004. Existing migrations 0001–0003, canonical schema/state graph and Phase 2 regressions preserved.
 - **220 passing tests** in six suites: previous 150 + 70 POP contract tests. Typecheck/format/build (~62.73 kB), fresh/upgrade/FK/integrity, concurrency/rollback and compiled workerd verification passed. npm audit: zero known vulnerabilities. No dependencies added.
 
-Real provider authentication probes were executed, but **no invoice, hosted payment, callback or canonical payment transition** was completed. Stub responses remain local-contract evidence only. Provider validation failed before secret installation; no new deployment, remote migration, secret activation, DNS/resource change or Phase 4 work occurred. See [docs/14](docs/14-duitku-pop-integration.md#live-execution-attempt--2026-10-01) for timestamped evidence and remaining technical gates.
+Real provider authentication probes were executed, but **no invoice, hosted payment, callback or canonical payment transition** was completed. Stub responses remain local-contract evidence only. Provider validation failed before secret installation; no new deployment, remote migration, secret activation, DNS/resource change or Phase 4 work occurred. See [docs/14](docs/14-duitku-pop-integration.md#direct-file-execution--2026-10-01) for latest timestamped evidence and remaining technical gates.
 
 ### Modules and provider boundary
 
