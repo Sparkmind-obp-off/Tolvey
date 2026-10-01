@@ -1,6 +1,61 @@
 # 14 — Duitku POP Integration Architecture
 
-## Current evidence — 2026-10-01
+## Live execution attempt — 2026-10-01
+
+Primary status: **SANDBOX VERIFICATION BLOCKED**. This section supersedes the earlier credential-unavailable execution status below; historical local-contract evidence remains valid, not live-payment evidence.
+
+### Scope / repository
+
+- User explicitly authorized secure consumption of the uploaded execution file and Cloudflare BYOK deployment after provider credential validation. Phase 4 is forbidden.
+- Read current docs 39/34/15/14/28, README, Wrangler config, provider source/migration/tests and transaction boundaries. Strategy remains ONE PRODUCT, MANY DOORS; no marketplace, catalog expansion or product-demand claim.
+- Branch main; clean fetched baseline `5c515ffc8c5e27a0e2049aa5ba765392b3913f3e`. Provider implementation inherited from `8a857ef84a91248de0dfa7525edcdc4203282345`. Evidence changes are delivered in the Git commit containing this section; its exact SHA and remote match are reported after push (no self-referential commit hash).
+
+### Execution-secret handling / contract
+
+- Credential file detected; required input names `API_KEY_DUITKU` and `CODE_MERCHANT` detected. Values parsed only in execution memory; no explicit sandbox environment marker detected.
+- Mapping: `API_KEY_DUITKU` → `DUITKU_API_KEY`; `CODE_MERCHANT` → `DUITKU_MERCHANT_CODE`. No duplicate secret names introduced.
+- Required provider secret names remain `DUITKU_API_KEY`, `DUITKU_MERCHANT_CODE`. Other required configuration: `APP_ENV`, `DB`, `DUITKU_ENV`, `DUITKU_POP_ENABLED`, `DUITKU_CALLBACK_URL`, `DUITKU_RETURN_URL`. Existing fail-closed configuration/readiness checks validate presence/format, but cannot prove provider authentication or replace a future deployment secret preflight.
+- No raw credential/body/header/signature/provider error text was printed or persisted. Curl received sensitive header configuration through stdin, never command arguments. No credential copied to workspace, `.dev.vars`, source, docs, Git or Cloudflare secrets.
+- User exposed the key in chat again. Rotation remains required. A rejection does not establish whether a key is invalid, production-only, or mismatched; do not infer any of those as proven.
+
+### Real provider probes (not mocks)
+
+| UTC time | Endpoint / operation | Observed evidence | Limit |
+| --- | --- | --- | --- |
+| 2026-10-01T06:51:03Z | Common sandbox `transactionStatus`, POST, current documented HMAC, random nonexistent order identifier | HTTP 404; no allowlisted provider status or authentication success established | Non-mutating probe, not a real order/payment; POP/status interoperability remains unverified |
+| 2026-10-01T06:51:33Z | Official POP sandbox `createInvoice`, signed headers, intentionally empty JSON body | HTTP 400, merchant-rejection classification, no invoice reference | Authentication/configuration probe only; insufficient fields intentionally prevent invoice creation |
+| 2026-10-01T06:51:53Z | Same POP sandbox authentication probe, urllib transport | HTTP 400; sanitized classification `merchant_not_found=true` | No raw response exposed; authentication success NOT proven |
+| 2026-10-01T06:53:16Z | Same POP sandbox authentication probe, independent curl transport | HTTP 400; `merchant_not_found=true`, signature-rejection classification false | Confirms observed rejection classification, not a complete valid invoice request or signature acceptance |
+| 2026-10-01T06:57:06Z | Same POP sandbox probe, precise phrase disambiguation | HTTP 400; exact phrase merchant not found detected; missing merchant-order-ID phrase not detected; non-JSON response | Rejection concerns merchant lookup, not an inferred missing-order error; raw text discarded |
+
+Only sandbox endpoints were used; no production provider endpoint, obsolete-signature fallback, fake callback, simulated paid order or payment was attempted. TLS verification remained enabled, bounded read/timeouts used. Raw responses were classified in memory and discarded. No invoice/order/provider reference exists for this execution. No payment-flow URL, callback, live signature acceptance, canonical payment transition, fulfillment authorization or live duplicate/replay was proven.
+
+### Cloudflare BYOK / deployed reads
+
+- Owner token setup and `wrangler whoami` succeeded; existing project metadata/config/inventory agree on `webapp-3`, main. Nine D1 databases listed; no capacity/provisioning claim and no unrelated resource modified.
+- Existing production DB remains `tolvey-production`; never reused for sandbox. No resource creation, remote migration, secret installation, new deployment or DNS change occurred.
+- `pages deployment list` confirms existing foundation deployment `ebe25222-ac17-400b-9211-520603e26f89`, source `efd5d7d`, https://webapp-3-38j.pages.dev. This is NOT a Phase 3 deployment.
+- Read-only checks via curl: `/health`, `/ready`, `/api/products`, `/api/offers` HTTP 200; supplied credential values absent from captured response bodies. Earlier urllib requests returned HTTP 403; transport discrepancy is recorded, not silently represented as successful urllib access.
+- Provider credential validation did not pass, so installation of `DUITKU_API_KEY` / `DUITKU_MERCHANT_CODE` and the requested Phase 3 BYOK deployment are **not performed / blocked**, not successful. No deployed checkout/initiation/callback/payment/fulfillment evidence exists.
+
+### Regression / security / delivery
+
+- Current-session `npm run check` exited 0: TypeScript typecheck, Prettier, **220/220 tests in six suites** (267.19s), compiled workerd callback/transaction regressions and final Vite build **62.73 kB** all passed. No ignored failing test. These are local contract tests, not live payment success.
+- Fresh local-only Wrangler migrations 0001–0004 under ignored `.wrangler/phase3-live-attempt` passed; second application reported no pending migrations. FK check empty; two generated local SQLite files checked read-only: integrity `ok`, zero FK violations. All four migration files byte-identical to baseline. No remote database touched.
+- `npm audit --audit-level=low`: zero known vulnerabilities. `git diff --check`, formatting recheck and `git fsck --no-dangling` passed.
+- Exact supplied API-key/merchant values scanned in tracked files, generated `dist`, existing TOLVEY PM2 logs and all 296 reachable Git objects: **zero file matches / no history match**. `.dev.vars` absent; credentials remain outside workspace. Captured existing foundation response bodies also had no exact supplied values. No provider raw-body or screenshot evidence retained. Remote runtime logs were not inspected and cannot be claimed audited.
+- `.gitignore` additionally blocks manually supplied `kredential*` and credential TXT/JSON/YAML filenames; test filename checks confirm credential/env paths ignored. No new dependencies, runtime edits or migration changes. Only evidence and credential-file ignore protection changed.
+- Commit/push exact SHA, remote-main equality and final clean-tree state are verified after this evidence revision and reported in the final execution report. Local tests/scans never substitute for missing real provider/deployed evidence.
+
+### Unblock / remaining mandatory technical gates
+
+1. In the Duitku sandbox portal, confirm an activated sandbox project exists and obtain its matching rotated project key via secure file/runtime input. Supplied project identity was classified as not found by POP; consult Duitku support if portal configuration appears valid. Do not switch to production endpoints to test the same key.
+2. Repeat bounded sandbox authentication/configuration verification; a valid real invoice must subsequently prove initiation (empty-body probes cannot prove it).
+3. Implement/review explicit dedicated deployed sandbox environment without pretending production is local/test; isolated D1; narrow authenticated initiation boundary; required-secret preflight; idempotent verified-payment → existing fulfillment authorization, with no delivery. Current local/test-only factory and absent initiation route are known unimplemented deploy gaps, NOT claimed fixed.
+4. Install validated secrets securely, migrate only isolated sandbox D1, deploy to the intended reviewed TOLVEY sandbox target, then execute real hosted sandbox payment and reachable HTTPS callback/status verification with canonical state and duplicate/replay evidence.
+5. Run all regressions/scans, record live evidence and Git delivery. Only the complete gate authorizes Phase 4. **Phase 4 NOT AUTHORIZED / not started.**
+
+## Historical local-contract evidence — 2026-10-01
 
 **PHASE 3 — CODE COMPLETE / SANDBOX BLOCKED**, subject to final clean pushed-main delivery. Evidence: **LOCAL CONTRACT TEST ONLY**. Baseline Phase 2 main: `7a3b80163b6fd6e65271a4e9b6a00c363ffceb3c`. No Phase 4, production deployment, DNS, remote D1, actual delivery, refund or customer transaction.
 

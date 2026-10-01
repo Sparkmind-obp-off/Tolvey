@@ -221,6 +221,16 @@ Current official HMAC formulas used, not obsolete SDK signatures. Unsigned callb
 
 Next session remains Phase 3: rotated sandbox secrets, approved reachable non-production HTTPS callback/return origin and isolated DB, then live POP payment/callback/status/retry evidence. Keep production disabled and preserve deployment identity. No Phase 4 authorization until the live gate is satisfied.
 
+### Phase 3 live execution attempt — 2026-10-01
+
+Latest explicit command now authorizes secure uploaded-file consumption and owner-account BYOK deployment **after sandbox credential validation**. Remains the same Phase 3; no Phase 4 implementation.
+
+Baseline main `5c515ffc8c5e27a0e2049aa5ba765392b3913f3e`; strategic docs 39/34 and current implementation reviewed. Input names detected and values parsed only in memory; no explicit sandbox marker. Real official sandbox-only status probe returned HTTP 404; POP signed empty-body authentication probes returned HTTP 400 classified **merchant not found**, independently confirmed via urllib and curl. No raw secrets/signatures/provider bodies exposed; no invoice/payment/callback/state transition claimed. Authentication success was not proven; no legacy-signature fallback or production provider request.
+
+Primary status: **SANDBOX VERIFICATION BLOCKED**. Provider-secret installation and requested new BYOK deployment were not performed because the precondition failed. Owner Cloudflare authentication/project/deployment inventory succeeded; existing `webapp-3` foundation remains unchanged. Curl health/readiness/catalog HTTP 200 does not constitute a Phase 3 redeploy or commerce verification. Isolated deployed sandbox environment/private initiation/fulfillment-authorization integration remain technical gaps, not falsely claimed implemented.
+
+Full timestamped attempt, secret-name contract, regression/security delivery results and unblock actions are in `docs/14-duitku-pop-integration.md`. Uploaded key still requires rotation after chat exposure; confirm an active sandbox project and matching key through a secure channel. **Phase 4 NOT AUTHORIZED.**
+
 ## Phase 4 — Product-to-Commerce Loop
 Build:
 - real product offer

@@ -10,6 +10,12 @@ dist/
 *.pem
 *.key
 *.p12
+# Manually supplied execution credentials must never enter Git.
+kredential*
+credential*.txt
+credential*.json
+credential*.yaml
+credential*.yml
 *.sqlite
 *.sqlite-shm
 *.sqlite-wal

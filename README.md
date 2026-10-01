@@ -6,9 +6,9 @@ One canonical product source → many distribution channels → one normalized t
 
 ## Current delivery — PHASE 3 — DUITKU POP
 
-**PHASE 3 — CODE COMPLETE / SANDBOX BLOCKED**. Evidence: **LOCAL CONTRACT TEST ONLY**. Baseline main: `7a3b80163b6fd6e65271a4e9b6a00c363ffceb3c` (Phase 2 complete). Final commit/push/clean-tree evidence is in the session report/history.
+**SANDBOX VERIFICATION BLOCKED** — latest execution 2026-10-01, baseline main `5c515ffc8c5e27a0e2049aa5ba765392b3913f3e`. Existing Phase 3 implementation remains code complete/local-contract verified; the real sandbox payment gate is not complete.
 
-**SANDBOX CREDENTIALS NOT AVAILABLE**: the key shared through chat/upload is compromised and was not reused or read from its file. No rotated approved runtime sandbox key was available. Do not send replacement secrets in chat.
+With explicit user permission, the execution credential file was parsed in memory. Required input names were detected and mapped to `DUITKU_API_KEY` / `DUITKU_MERCHANT_CODE`; no explicit sandbox marker was present. Real sandbox-only POP authentication probes returned HTTP 400, classified as **merchant not found**, confirmed with independent urllib/curl transports. Authentication success is NOT proven. A common status probe returned HTTP 404 and did not prove POP/status compatibility. Raw provider responses, credentials and signatures were not printed or persisted. The key exposed in chat still requires rotation; do not send replacement secrets in chat.
 
 Implemented and locally verified:
 - Isolated Duitku POP adapter, fail-closed sandbox config, current official HMAC-SHA256 request/callback signatures and fixed-length verification.
@@ -20,7 +20,7 @@ Implemented and locally verified:
 - Provider-only additive migration 0004. Existing migrations 0001–0003, canonical schema/state graph and Phase 2 regressions preserved.
 - **220 passing tests** in six suites: previous 150 + 70 POP contract tests. Typecheck/format/build (~62.73 kB), fresh/upgrade/FK/integrity, concurrency/rollback and compiled workerd verification passed. npm audit: zero known vulnerabilities. No dependencies added.
 
-No live Duitku request/payment/callback was executed. Stub responses are not sandbox success. No production deploy, remote migration, secret activation, DNS/resource change or Phase 4 work.
+Real provider authentication probes were executed, but **no invoice, hosted payment, callback or canonical payment transition** was completed. Stub responses remain local-contract evidence only. Provider validation failed before secret installation; no new deployment, remote migration, secret activation, DNS/resource change or Phase 4 work occurred. See [docs/14](docs/14-duitku-pop-integration.md#live-execution-attempt--2026-10-01) for timestamped evidence and remaining technical gates.
 
 ### Modules and provider boundary
 
@@ -74,7 +74,7 @@ No production checkpoint API enablement; no public customer transaction access/r
 ## Deployment / URLs
 
 - Repository: https://github.com/Sparkmind-obp-off/Tolvey — main.
-- Existing production remains **Phase 1 only**, https://webapp-3-38j.pages.dev, last known deployed source `efd5d7d8408646f04e0a72afd52849ba6b550a07`. Not re-deployed this session.
+- Existing production remains **Phase 1 only**, https://webapp-3-38j.pages.dev, deployed source `efd5d7d8408646f04e0a72afd52849ba6b550a07`. BYOK account/project/deployment identity rechecked; curl health/readiness/catalog returned HTTP 200. Not re-deployed this session; these reads do NOT prove Phase 3 deployed verification.
 - Target `tolvey.pages.dev` / intended `tolvey.biz.id` not achieved here; earlier account absence was not global hostname availability. Preserve current project; see docs/25 for later deliberate identity gate.
 - Preview/staging has no DB due earlier account quota, never share production D1. No remote resource was created/deleted or mutated.
 - Sandbox port 3000 is temporary local runtime, not production.
@@ -115,6 +115,6 @@ Fresh `.wrangler/phase3-pop-fresh` migration and existing-local upgrade passed; 
 
 ## Remaining blockers / next action
 
-Remain in Phase 3 until rotated approved sandbox project credentials and a reachable approved non-production HTTPS callback/return origin/isolated DB are configured, then execute live POP invoice → hosted payment → callback → common status verification → canonical success/failure/duplicate scenarios. Verify current HMAC rollout, status API compatibility and provider acknowledgement behavior with the actual project. Do not silently fall back to obsolete signatures.
+Remain in Phase 3. First verify/create an activated project in the Duitku **sandbox** portal and supply its rotated matching project key through a secure file/runtime channel: current POP probes classify the supplied merchant as not found. No production endpoint or legacy-signature fallback was attempted. After credential validation, establish a dedicated deployed sandbox environment, isolated D1, reviewed private initiation boundary and idempotent fulfillment-authorization handoff (without delivery); these technical deployment gaps are NOT yet implemented. Then install validated secrets through secure stdin and execute live POP invoice → hosted payment → callback → common status verification → canonical success/failure/duplicate scenarios. Verify current HMAC rollout, status API compatibility and provider acknowledgement behavior with the actual project. Do not silently fall back to obsolete signatures.
 
 Production payment stays disabled. Later release requires production-specific project/key, domain/DNS, activated channels, access/rate limits, monitoring/recovery/security and real end-to-end evidence. Actual product/delivery/public storefront/distribution/Layer 2/revenue/demand remain outside this session. **Do not start Phase 4.**
