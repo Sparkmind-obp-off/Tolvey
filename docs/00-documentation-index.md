@@ -4,7 +4,15 @@ This directory is the canonical documentation system for TOLVEY.
 
 ## How to read the system
 
-Start with:
+Current authority and efficient reading order (2026-10-01):
+1. README current documentation/code-release distinction.
+2. docs/39 strategy and docs/34 three-engine commercial architecture.
+3. docs/19 master full-system workflow; docs/15 audit/gap/dependency/backlog.
+4. docs/16 bounded execution/session contract; affected subsystem specs and source/tests.
+
+Read all documents for a requested repository-wide audit; normal build continuations read relevant changes/contracts, not all 40 files again. docs/28 is archived completed Phase 2 context. Timestamped historical sections preserve what was true then, not current execution commands.
+
+Topic reference order (not a mandatory reread every session):
 1. Brand and positioning
 2. PRD
 3. Product architecture
@@ -48,7 +56,7 @@ Start with:
 | 16 | Master Genspark prompt | Execution prompt |
 | 17 | PRD | Product requirements |
 | 18 | UX/UI design system | Experience architecture |
-| 19 | Full-stack architecture | System architecture |
+| 19 | Master full-system workflow & full-stack architecture | Canonical target cycle, exceptions, dependencies, research |
 | 20 | Frontend architecture | Frontend boundary |
 | 21 | Backend/API contract | API boundary |
 | 22 | Data/D1 architecture | Data boundary |
@@ -57,7 +65,7 @@ Start with:
 | 25 | Deployment/environments/domains | Infrastructure identity |
 | 26 | Presentation/submission brief | Presentation source |
 | 27 | Commercial validation & metrics | Evidence/measurement authority |
-| 28 | Phase 2 Master System Prompt | Phase 2 execution authority |
+| 28 | Historical Phase 2 Master System Prompt | Archived; local/test gate already delivered |
 | 29 | Digital Product Architecture | Layer 1 product architecture |
 | 30 | Digital Product Catalog v1 | Initial catalog and price hypotheses |
 | 31 | Free & Funnel Product Strategy | Discovery/funnel architecture |
@@ -92,11 +100,13 @@ Current state:
 - Phase 1 — Foundation: complete
 - Phase 2 — Transaction Core: COMPLETE within the latest provider-neutral local/test continuation gate; 150 tests, atomic lifecycle, expiry/cancel, fulfillment retry and refund-request representation verified. Git delivery evidence is in the final session report. No production commerce/provider/delivery readiness is claimed.
 - Phase 3 — Duitku POP: DEPLOYED / PRODUCTION CONNECTION VERIFIED for latest bounded credential-storage/backend-connectivity request. Production adapter config implemented, provider/operator secrets installed in owner Cloudflare Pages, actual deployed Worker authenticated connection returned 200 verified. Production transaction/callback execution stays disabled; no invoice/payment/delivery or complete sandbox end-to-end gate claimed. Existing project/DB preserved, no remote transaction migration or Phase 4. Current release/security/regression/Git evidence: docs/14.
-- Phase 4 — Product-to-Commerce Loop: planned
-- Phase 5 — Distribution: planned
-- Phase 6 — Observability & Security Hardening: planned
-- Phase 7 — Production Validation: planned
+- Phase 4 — Product-to-Commerce Loop: specified, not implemented. Independent real-package/read-only page preparation can be authorized while Phase 3 is blocked; integrated paid loop cannot skip its gate.
+- Phase 5 — Distribution: planned, manual eligible channel first; business content/policy review can progress independently.
+- Phase 6 — Observability & Security Hardening: baseline already partial; launch-critical ownership/abuse/exception/recovery controls are dependencies of Phase 3/4/7, not deferred until after distribution.
+- Phase 7 — Production Validation: planned; separate controlled payment/delivery release authorization required. Does not require every channel or an advanced dashboard first.
 - Phase 8 — Optimization: planned
+
+Latest audit coverage: all **40 docs 00–39**, with per-document disposition, 15 prioritized gaps and bounded next objectives in docs/15. This documentation-only delivery does not redeploy code, change secrets/DNS, or execute Phase 4. Deployed source remains `d73a4df`; later doc commit SHA is not the deployed artifact.
 
 ## Documentation change rule
 

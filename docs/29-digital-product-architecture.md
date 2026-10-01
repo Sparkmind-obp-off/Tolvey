@@ -6,7 +6,7 @@ Updated: 2026-09-30
 
 ## 1. Purpose
 
-Layer 1 is the primary TOLVEY commercial engine: repeatable digital products that can be purchased, delivered, updated, bundled, and distributed across multiple compatible channels.
+Layer 1 is the reusable **digital-product offering tier**: products that can be purchased, delivered, updated, bundled and distributed across eligible channels. It is not Engine 1 numbering. The three business engines are Own Commerce, Distribution and Brand/Demand (docs/39/34). Commercial statuses below are evidence vocabulary, distinct from implemented DRAFT/ACTIVE/ARCHIVED publication state; these wider fields/formats are specifications, not all implemented schema. Start one approved candidate/package, not the full hierarchy (docs/06/19).
 
 TOLVEY is not positioned as a generic template dump or PLR marketplace. Products should solve a concrete job, contain a coherent workflow, and have clear ownership/licensing.
 

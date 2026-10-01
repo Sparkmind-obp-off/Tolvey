@@ -1,5 +1,9 @@
 # TOLVEY — Technical Architecture
 
+## Current implementation boundary — 2026-10-01
+
+Current source/release: `d73a4df`. Foundation is deployed, local/test transaction lifecycle and POP adapter are implemented, and private production connection authentication/secrets are deployed. Production transaction execution remains disabled. Remote transaction schema/customer commerce/private delivery/operator publication are not complete. Current master full cycle and technical choices: docs/19; prioritized dependencies: docs/15. Component/entity/event inventories below are targets, not all implemented tables or routes.
+
 ## Architecture principle
 Keep the system modular and simple. TOLVEY should own the canonical product and commerce model while external platforms remain replaceable channel adapters.
 
@@ -51,7 +55,7 @@ Clarified by the Phase 0 audit on 2026-09-30. Use the gated execution plan in `d
 
 Minimum secret isolation, authorization where required, and input validation apply from the first implemented endpoint; Phase 6 does not defer these controls.
 
-## Implemented foundation — 2026-09-30
+## Historical implemented Foundation snapshot — 2026-09-30
 
 - Entry: `src/index.ts`; modules `src/config.ts`, `src/catalog.ts`, `src/types.ts`. No Node APIs or Node compatibility flags in the deployed application.
 - Build: Hono/Vite Pages advanced-mode Worker (`dist/_worker.js`), generated `_routes.json`, public static CSS. An explicit terminal route preserves JSON 404 through the build plugin's outer Hono wrapper.

@@ -1,5 +1,21 @@
 # TOLVEY — Security & Data
 
+## Current boundary and mandatory launch controls — 2026-10-01
+
+Production connection release `d73a4df`: matching production config, encrypted provider/operator secrets and private non-creating connection API. Production commerce/callback/checkpoint remain disabled. Provider authentication is not customer authorization or completed payment; no full security/recovery audit claimed.
+
+Before exposing checkout/publication/delivery:
+- Guest/operator principal verification, record ownership, CSRF/origin defenses for cookie mutations, session expiry/revocation and verified recovery; no UUID/email-only access.
+- Principal-scoped idempotency; current single-service checkout key/token must not be copied into a public customer design.
+- Bounded body/query/contact data, parameterized SQL and output escaping; no raw provider/PII/secrets in logs.
+- Deployment-compatible abuse/rate controls and optional server-validated Turnstile; fail closed for new financial initiation if protection unavailable. Callback provider authentication is not a human challenge.
+- Minimal email/policy data with documented purpose/retention/access; marketing consent separate, no payment-card storage.
+- Private immutable versioned assets and payment-gated entitlements; test unpaid/other-customer/revoked access. Customer session or verified recovery needed, not public storage URLs.
+- Durable exception visibility for ambiguous/missing/late payment and paid delivery failure; authorized audited commands, not arbitrary mark-paid/complete-refund endpoints.
+- Key rotation, isolated staging/sandbox, safe app rollback and rehearsed data recovery/reconciliation before production launch. D1 restore cannot undo provider payments.
+
+These are target launch requirements, not implemented controls inferred from existing 237 tests. Later Phase 6 adds deeper ergonomics, not permission to defer them. See docs/19 and docs/12.
+
 ## Security principles
 
 - Least privilege
@@ -56,9 +72,11 @@ For a suspected credential leak: disable/rotate credential; inspect affected sco
 
 Never paste secret values into GitHub issues, documentation, chat, or commits.
 
-## Phase 3 POP security boundary — 2026-10-01
+## Historical Phase 3 local POP security boundary — 2026-10-01
 
-Only sandbox/local/test is accepted; provider configuration missing/disabled/production/staging fails closed. Secrets are runtime-only, API Key equals official Merchant Key; no extra secret variable or hard-coded merchant code. Chat/upload key is compromised and not read/reused. No production enablement.
+The sandbox-only/no-file-use statements describe the initial code checkpoint, superseded for production connection and secure file consumption by docs/14 and the current boundary below.
+
+At that initial checkpoint only sandbox/local/test was accepted, and supplied credentials were not used. Subsequently secure uploaded-file consumption and matching production connection configuration were explicitly authorized and implemented. Credential provenance from an upload is not a reason to refuse secure execution. Chat-exposed values still require rotation before paid activation. Secrets remain runtime-only; API Key equals Merchant Key.
 
 Minimum callback route validates HMAC-SHA256 over documented merchant/amount/order fields. resultCode/reference are NOT signed, so first acceptance requires a matching authenticated server-side status read before normalized core processing. Merchant/reference/order/money and terminal/expiry rules still apply. Unknown status/outage is fail-closed; exact accepted fingerprint replays can skip status read without repeating a payment. Conflicts are rejected/audited.
 

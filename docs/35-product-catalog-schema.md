@@ -7,7 +7,13 @@ Updated: 2026-09-30
 ## Purpose
 Define the minimum commercial record for every TOLVEY product.
 
-## Required fields
+## Implemented vs target mapping — audit 2026-10-01
+
+This is a commercial record **specification**, not the implemented D1 table definition. Actual schema is immutable migrations 0001–0004 (docs/22): Product identity/slug/summary/publication state, ProductVersion/version/private metadata, Offer/version/authoritative integer money/private delivery reference, and local transaction/provider records. Family/type/license/outcome/support/channel eligibility/manifest and commercial evidence status are not all first-class persisted fields today.
+
+For the first candidate, validate required business fields through a launch brief/publication service and add only queryable structured fields needed by its consuming capability. Publication DRAFT/ACTIVE/ARCHIVED is distinct from commercial IDEA/LISTED/FIRST_SALE/VALIDATED; ACTIVE never implies market validation. Offer alone owns sale price/currency/exponent; product price hypotheses/display copy must not become independent checkout money. Version asset manifest/hash and real package presence gate paid publication; service scope is separate from reusable digital assets. Bundles are deferred until component/version/grant rules are deliberately implemented.
+
+## Required fields (target business record)
 - product_id
 - family
 - product_name

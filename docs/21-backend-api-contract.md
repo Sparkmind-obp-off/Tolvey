@@ -1,5 +1,20 @@
 # TOLVEY — Backend & API Contract
 
+## Current contract overlay — 2026-10-01
+
+Baseline `d73a4df`: 237 local/workerd tests; foundation reads and protected production non-creating connection check deployed. Internal checkout APIs are non-production/disabled; production callback/gateway execution disabled. Historical 150/220 and initial sandbox-blocked statements below are scoped checkpoint facts. No customer order/session/download/publication API exists yet.
+
+### Planned first-loop capabilities (not existing endpoints)
+
+- Authorized draft/review/publication: active parent/package/version/license/terms checks, audited operator command, hidden private fields.
+- Guest checkout: server-issued scoped session/ownership + CSRF/origin/abuse control; authoritative offer/quantity/contact/policy input only; principal-scoped idempotency and atomic pending order. Never reuse diagnostic/checkpoint token in browser.
+- Owned status/payment initiation: authorize the same order principal before every read/mutation; no anonymous order-ID/email lookup. Gateway verifies provider and durable reservation; status UI reads canonical truth, not unrestricted provider probes.
+- Private delivery/access: confirmed payment + unique pinned-version entitlement + ownership/expiry/revocation; protected R2 stream, not public delivery_reference.
+- Operator exceptions/support/reconciliation: restricted safe read view and specific audited commands; no arbitrary set-state/force-paid/refund-complete route.
+- Service inquiry and external-origin intake: separate validated/authenticated capability contracts; external channel IDs unique and evidence-verified, no fake own checkout/payment.
+
+Finalize route names/methods/DTOs together with each implemented consuming UI in its authorized slice, then update this contract with exact tested behavior. Do not invent live endpoint URIs for planned capabilities. Refer to docs/19 for workflow and docs/12 for denial/retry/recovery acceptance.
+
 ## 1. API role
 The Hono application is the controlled application boundary between clients, domain logic, D1, and external adapters.
 

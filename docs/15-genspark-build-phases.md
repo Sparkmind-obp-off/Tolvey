@@ -1,9 +1,132 @@
 # 15 — Genspark Build Phases & Session Strategy
 
-## Objective
-Build TOLVEY as a production-oriented Product House Hub + Commerce House Hub, using Genspark as an implementation environment while preserving a Cloudflare-compatible production architecture.
+## Current execution authority — system audit, 2026-10-01
 
-The build is divided into gated phases. One phase should normally be one focused Genspark session. Do not burn a large session trying to build the entire system blindly.
+This section supersedes conflicting **future execution order/session advice** below, not historical facts or unmet payment gates. Master full-cycle specification: [19](19-full-stack-system-architecture.md). Copyable session prompts: [16](16-master-system-prompt-genspark.md). Strategy remains docs/39 and docs/34.
+
+### Audit scope and evidence
+
+- Reviewed README and all **40 documents, 00–39**, against current routes/config, catalog/checkout snapshots, core factories/CAS/receipts, provider reservation/callback/connection boundaries, migrations and test coverage. This is a workflow/documentation audit, not a complete code-security or legal audit.
+- Clean main baseline: `d73a4dfba04c8207f2b5f440e0052840cefdfc3d`. Phase 2 local gate delivery: `7a3b80163b6fd6e65271a4e9b6a00c363ffceb3c`; initial adapter delivery: `8a857ef84a91248de0dfa7525edcdc4203282345`.
+- Prior implementation release: 237 tests/typecheck/format/build passed; actual production backend authentication verified, no invoice/payment. These are inherited timestamped results, not newly executed tests in this documentation audit.
+- Read-only public curl checks on 2026-10-01 at approximately 11:24Z: `/health`, `/ready`, `/api/products`, `/api/offers` HTTP 200; both lists empty. Python urllib attempts failed with HTTPError; curl succeeded. Readiness is foundation/config readiness, not commerce readiness. No new authenticated provider call or Cloudflare resource inspection performed.
+- No code/config/schema/test/dependency edits, secrets/DNS changes, remote migrations, deploy, invoice/payment or Phase 4 implementation authorized or performed here.
+
+### Audit delivery validation
+
+Executed in this documentation session: all 40 document IDs covered by disposition matrix; local Markdown/named-document references exist and fenced blocks balanced; `git diff --check`, `git fsck --no-dangling`, `npm run typecheck`, `npm run format:check`, `npm run build` (65.58 kB) and `npx vitest run tests/repository.test.ts` **5/5 passed**. Format check excludes historical Markdown; link/fence/diff checks supply the documentation validation. Full 237-test commerce/contract suite was **not rerun**, because runtime/config/schema/tests are unchanged. No new payment/network evidence substituted for missing live gate. Exact Git delivery/remote match is reported after push; no self-referential commit SHA inserted.
+
+### Diagnosis: why progress felt slow
+
+The bottleneck is **missing integration and business inputs**, not a need for another framework. The repository accumulated strong infrastructure/local safety proof while scopes deliberately excluded customer UI, publication, real assets, record ownership and actual delivery. Repeating old full-repo/provider audits cannot complete those missing capabilities.
+
+Documentation also mixed historical snapshots with current state; treated offering tiers as business engines; made one phase sound like one session; repeated Phase 2 prompts after completion; and deferred important operations/security to late phases. These were documentation/execution defects, not evidence that existing core code is worthless.
+
+### Prioritized gap / dependency matrix
+
+| ID / priority | Actual gap and source | Required action / owner | Acceptance gate |
+| --- | --- | --- | --- |
+| G01 / P0 | No real public launch product/offer; catalog read-only and live lists empty | Founder supplies/approves buyer, package, price, license and terms; product creator QA | Working master package, honest launch brief; hypothesis not called validated |
+| G02 / P0 | No controlled publication workflow; docs35 schema is not D1 schema | Engineer: draft/review/publish service and smallest operator action | Unauthorized writes denied, active parents/package checks, audited activation/rollback to unpublished |
+| G03 / P0 | Public root status page; no consuming storefront/product UI | Engineer: SSR product page, mobile/error/empty states and honest CTA | Published persisted product/offer rendered; draft/private fields hidden |
+| G04 / P0 | Internal single-service token/idempotency is not customer auth | Engineer: scoped guest session, ownership, contact/policy retention, CSRF/abuse/recovery | Customer A cannot read/initiate/download B; no order UUID/email-only authorization; same-principal retries safe |
+| G05 / P0 | Production connection ≠ hosted sandbox transaction; core/gateway/env/schema reject execution | Engineer + owner/provider: isolated real sandbox target, narrow initiation and additive release design | Real invoice/payment/callback/status/replay/failure evidence; no spoofed local env, production DB or stub substitute |
+| G06 / P0 | delivery_reference and fulfillment states do not deliver bytes or services | Engineer + creator: pinned asset manifest, private R2, payment-gated access/retry | Purchased version retained, unauthorized/unpaid/expired grants denied; retrieval evidence separate from customer use |
+| G07 / P0 | RESERVED ambiguity/missing callback/late payment have no full operator resolution flow | Engineer + operator: durable exceptions, reconciliation/status evidence and safe actions | Timeout/replay/late-paid case visible, assigned and recoverable; no blind recreate/force-paid |
+| G08 / P0 | Rate limits, operational alerts/recovery rehearsal/customer policies not launch-complete | Engineer + owner: baseline controls with checkout; incident/recovery and support runbooks | Abuse denied, paid-delivery failure visible, non-prod recovery rehearsed, disable-new-checkout preserves truth |
+| G09 / P0 release | Remote transaction migration, key rotation, production service facade and controlled payment not done | Separate authorized release session; engineer + owner | Additive migration/fresh/upgrade, compatible rollback, real authorized payment/delivery evidence; preserve guard defaults until approved |
+| G10 / P1 | Service model only conceptual; current fulfillment creation DIGITAL | Founder/operator: one scoped service inquiry; engineer: inquiry/acceptance path when needed | Scope/capacity/revisions/input/timeline/handoff defined; inquiry not counted as sale or delivery |
+| G11 / P1 | Channel/source string ≠ external-order normalization or verified attribution | Engineer/operator: one approved manual channel + unique external-origin intake | One canonical version/listing mapping, duplicate imports safe, verified source evidence; no fake own checkout |
+| G12 / P1 | Commercial funnel/economics specified, no implemented report | Engineer/operator: minimum read view/aggregates and experiment log | Tests excluded, distinct confirmed/fulfilled counts, known fees/costs vs unknown, no fabricated profit |
+| G13 / P1 | Brand/personal content and ads need offer destination, owner and budget | Founder: one primary channel, real demo/content/link, permitted promotion | Qualified signals recorded; ads only with explicit spend cap and working delivery/economics |
+| G14 / P1 release | Preview has no DB, old quota/domain evidence not freshly verified | Owner/engineer: verify isolated resource capacity and identity before release | Never share production or delete unrelated DB; intended domain only attached under explicit DNS scope |
+| G15 / P2 | Catalog/tool/channel/automation breadth outruns evidence | Defer advanced admin, all channels, bundles, affiliates, extra providers | Repeated measured problem or customer evidence justifies addition |
+
+P0 means a blocker **for the capability/launch that depends on it**, not that every read-only page waits for all P0 items. Engineering owns implementation; founder approval of real product/legal promises and provider/account/payment access cannot be manufactured.
+
+### Updated gate dependency map (same phases 0–8)
+
+| Phase | Current state / purpose | Complete gate / dependencies |
+| --- | --- | --- |
+| 0 Audit | Original audit delivered; this full-system enhancement is documentation-only | Reconciled workflow/gaps/prompts and Git delivery; not commerce proof |
+| 1 Foundation | Delivered | Preserve deployed runtime/catalog, safe defaults and tests |
+| 2 Transaction Core | Delivered local/test | Preserve provider-neutral lifecycle; do not restart or imply production APIs |
+| 3 Duitku POP | Code/local contract + production connection delivered; live full-payment gate incomplete | Supported isolated deployed sandbox, private initiation, real invoice/payment/callback/common-status/replay/failure/reconciliation. If sandbox route cannot be supplied, record blocker; any alternative controlled production verification needs a separate explicitly approved gate revision, never silent substitution |
+| 4 Product-to-Commerce | Not implemented | One package/version/offer → authorized publication → customer page/access/checkout → verified provider signal → private fulfillment → support/visible evidence in non-production; depends on Phase 3 for provider E2E. Launch-critical Phase 6 controls included |
+| 5 Distribution | Planned | One eligible external commerce path from same version, channel policy/economics, unique verified external evidence; manual first. May pilot independently if fulfillment and account gates pass |
+| 6 Security/Observability | Baseline already partial, deeper operations planned | Baseline ownership/rate limits/exception visibility/recovery required before checkout launch; deeper dashboard/alerts follow real load. Not a reason to defer baseline to after distribution |
+| 7 Production Validation | Not passed | Phase 3 live + Phase 4 integrated + baseline security/recovery; separately authorized production schema/gateway/secrets and controlled real payment/delivery/reconcile. Does not depend on all Phase 5 channels or advanced Phase 6 dashboard |
+| 8 Optimization | Deferred | Measured repeatable work/economics, then targeted automation |
+
+Independent business work (real product QA, scope, content, channel-policy review) and authorized read-only UI work can proceed while provider verification is blocked. This is **not permission to skip Phase 3 or execute Phase 4 now**. Phase 4 integrated payment gate still waits. Phase 7 precedes broad launch/paid scaling; the phase numbers classify scope, not a strictly linear schedule for independent tasks.
+
+### Next authorized-build recommendation and session-sized outputs
+
+**Next objective: one launch candidate + controlled catalog publication consumed by a customer product page.** This is a proposed next session, not code delivered by this audit. Do not start another provider-debug session by default. If actual facts/assets are absent, implement reusable local/test publication/page behavior with clearly labeled fixture; keep production catalog and paid CTA unchanged and report missing inputs.
+
+| Bounded session objective | Coherent output, not public phase subdivision | Exit proof |
+| --- | --- | --- |
+| Product/publication to page | Real/approved launch brief plus persisted draft/review/active offer and actual product detail UI | Hidden drafts, denied writes, terms/content, safe DTO, mobile/error checks |
+| Provider live gate continuation | Separately track actual Phase 3 environment/private initiation/status/callback/recovery | Real sandbox evidence, exact blockers if absent; no repeated empty-auth probe sold as progress |
+| Customer checkout to pending order | Guest ownership/contact/policy, authoritative summary, idempotent creation/status UI | Compiled create/replay/conflict/other-customer denial, abuse/expiry/recovery |
+| Confirmed payment to private access | Entitlements, pinned R2 version, fulfillment/failed-delivery view | Unpaid/other-customer denial; duplicate signal/grant safe; missing asset/retry |
+| Operator resolution and release candidate | Order/exceptions read view, safe actions, support/refund/restore rehearsal | One full non-prod loop plus failure/recovery; all baseline launch gates checked |
+| Controlled production validation | Only separately authorized Phase 7 scope | Real payment/delivery/reconcile, source/migration evidence and honest limitations |
+| One external channel + demand loop | Manual policy-admitted listing/content, external intake/metrics when authorized | Canonical mapping, verified evidence/duplicates, weekly learning |
+
+These objectives can combine or span sessions according to actual complexity. No fabricated credit estimate or promise of guaranteed revenue. No elaborate login/cart/dashboard/library prerequisite when a narrow secure session, one offer and small operator view suffice.
+
+### Document coverage / disposition — all 40 reviewed
+
+| Doc | Disposition and audit conclusion |
+| --- | --- |
+| 00 | Updated authority/read order/current gates; no 40-document reread per normal session |
+| 01 | Retain brand/no-marketplace principles; no implementation conflict |
+| 02 | Retain Offer authority/catalog rules; planned wider metadata remains specification |
+| 03 | Retain neutral commerce; detailed branch/recovery gaps now specified in 19 |
+| 04 | Retain channel/canonical principles; admission evidence now 32/19 |
+| 05 | Retain Money Kit hypothesis; remove compulsory Money Kit choice elsewhere |
+| 06 | Rewrite minimal coherent launch scope and separate preparation/release proof |
+| 07 | Current production-connection overlay; old sandbox restrictions labeled historical; baseline launch checklist |
+| 08 | Retain evidence discipline; operational funnel definitions now 27/19 |
+| 09 | Add decisions D008–D011: connection limit, terminology, dependencies and session contract |
+| 10 | Specify publication/support/reconciliation/refund/recovery operator cycle |
+| 11 | Label Phase 1 snapshot historical; direct current boundaries to 19/21 |
+| 12 | Current 237 release overlay; add differentiated acceptance/recovery matrix; retain historical counts |
+| 13 | Retain local core contract; current boundary overlay prevents simulation/delivery confusion |
+| 14 | Preserve provider attempt history, correct current final deployment/source stamp and limits |
+| 15 | This audit/gap/dependency/backlog authority; retain old evidence as history |
+| 16 | Replace broad repeated-audit prompt with bounded implement/verify/handoff and copyable next prompt |
+| 17 | Retain PRD, specify minimal cross-engine launch acceptance and service separation |
+| 18 | Retain design system; add scoped launch surfaces instead of giant operator inventory |
+| 19 | Master workflow, three paths, data/runtime choices, exceptions, official research |
+| 20 | Clarify actual status, scoped guest UI/recovery, CSP/form and compiled test requirements |
+| 21 | Current overlay + planned capability/security contract; existing routes not renamed as public APIs |
+| 22 | Current schema boundary + proposed assets/session/external models explicitly unimplemented |
+| 23 | Reconcile historical no-provider text with deployed connection; retain neutral adapter contract |
+| 24 | Reconcile candidate automation wording; reliability controls are required, growth automation deferred |
+| 25 | Current existing-project source/URL; old Foundation identity evidence historical; domain/staging not solved |
+| 26 | Current honest presentation evidence; remove misleading absence of production connection integration |
+| 27 | Replace stale next-Phase-2 status, add metrics denominators/economics/test exclusion |
+| 28 | Archive completed Phase 2 prompt, not active restart instruction |
+| 29 | Offering tier terminology clarified; catalog size not evidence |
+| 30 | Explicit idea inventory, not launch commitment/actual records; one candidate first |
+| 31 | Retain optional free funnel; a free lead magnet is not required before a paid candidate |
+| 32 | Distinguish demand vs commerce, current Indonesia TikTok virtual/service policy; eligibility not assumed |
+| 33 | Service inquiry/acceptance/milestones; DIGITAL placeholder not service implementation |
+| 34 | Current connection/full-gate distinction and engines vs tiers |
+| 35 | Commercial record specification ≠ implemented schema; operational mapping/price authority |
+| 36 | Separate product launch gates from engineering/payment/release gates; listing ≠ sale |
+| 37 | Retain truthful listing standard; policy gate reinforced by 32/38 |
+| 38 | Manual channel intake/unique external IDs/verification/cost evidence/unknown attribution |
+| 39 | Preserve vision, correct ambiguous layer labels/current connection status and replace orphan citations |
+
+Research sources and constraints reviewed 2026-10-01 are linked in docs/19 §10 and docs/32. Decisions/gaps are recommendations/specification, not implementation proof. Scope deliberately excludes a full legal/privacy compliance determination or provider/account admission.
+
+## Objective (historical plan context)
+Build TOLVEY as a production-oriented Product House Hub + Commerce House Hub, preserving the Cloudflare-compatible architecture.
+
+One phase is one gate; one working session is one bounded objective. They are not one-to-one. The historical evidence below remains a record of its dated scope; read the current section above before selecting future work.
 
 ## Strategic North Star — Mandatory Context
 

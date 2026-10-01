@@ -1,5 +1,13 @@
 # TOLVEY — Data & D1 Architecture
 
+## Current schema boundary — 2026-10-01
+
+Migrations 0001–0004 are implemented/immutable. Last remote release uses foundation schema only; 0002–0004 were not applied remotely. Production connection does not need transaction tables and is not schema activation. Historical counts below describe local checkpoints; last code regression total 237. No Asset/Entitlement/CustomerSession/ServiceScope/ChannelListing/external-order/reporting tables exist.
+
+Target additions (specification, not migration instructions): version-pinned private asset manifest/hash, scoped guest principal/contact/policy/retention, unique payment-gated grant/access audit, publication audit, durable exception/support case, service scope/acceptance and unique external-channel origin/evidence. Design each only with its consuming capability. DRAFT/ACTIVE/ARCHIVED publication is distinct from IDEA/FIRST_SALE/VALIDATED commercial evidence. Keep Offer authoritative integer money; price hypotheses are not another sale-price source.
+
+Existing checkout key scope is one internal service and existing fulfillments creation is DIGITAL/BLOCKED. Multi-customer and services/external checkout require reviewed additive design, not metadata pretending these workflows exist. Migration 0004 CHECK and gateway/project hashes are sandbox-only; production support requires additive migration/backfill and a narrow production service facade, not history rewrite/simulation bypass. Fresh/upgrade compatibility and actual external reconciliation are release prerequisites (docs/19, docs/12).
+
 ## 1. Data principle
 D1 is the canonical structured operational store for TOLVEY's application state.
 

@@ -4,7 +4,20 @@
 
 **ONE PRODUCT, MANY DOORS:** one canonical product source → many distribution channels → one normalized transaction model → one operational truth. Own Shop, Distribution, and Brand/Demand remain the three business engines; this release does not re-architect them.
 
-## Current delivery — production connection deployment
+## Latest documentation delivery — full-system audit and build workflow
+
+Updated 2026-10-01 against code baseline `d73a4dfba04c8207f2b5f440e0052840cefdfc3d`. Reviewed all **40 documents (00–39)** against implementation/config/schema/test boundaries and prior deployment evidence. This delivery changes documentation only; it does not implement Phase 4 or activate commerce.
+
+- [Master full-cycle workflow](docs/19-full-stack-system-architecture.md): demand → one product/version/offer → publication → own/external purchase → verified payment → private access/delivery → support/reconciliation → evidence → improvement; separate service workflow and official sources.
+- [Audit findings, dependencies and prioritized backlog](docs/15-genspark-build-phases.md): 15 gaps, all-document coverage, preserved phase numbering, launch-critical security/operations brought forward.
+- [Master/session prompts](docs/16-master-system-prompt-genspark.md): bounded vertical slices, targeted reading instead of repeated full audits, acceptance tests, blockers and copyable next-build/continuation prompts.
+- [MVP](docs/06-mvp.md), [operator full cycle](docs/10-operator-playbook.md), [metrics](docs/27-commercial-validation-and-metrics.md): one real candidate first, manual channel/content work before automation, no fabricated business proof.
+
+**Recommended next implementation:** one approved launch candidate and controlled publication consumed by a mobile-friendly product page. If actual assets/facts are missing, local/test fixture only, production unchanged. Track Phase 3 live payment verification separately; do not make another empty authentication probe the storefront objective. Customer checkout/ownership, private R2 delivery and operator exceptions are subsequent integrated slices; paid activation requires explicit release authorization.
+
+Audit validation: **40/40 doc coverage**, local references/fences/diff checks, typecheck/format/build and **5/5 repository safety tests passed**; runtime/config/migrations unchanged. Full 237-test suite was not rerun in this docs-only session. Read-only curl health/readiness/catalog HTTP 200, active products/offers empty; no production payment/revenue inferred. See docs/15 for timestamp and transport limitation.
+
+## Last code/runtime delivery — production connection deployment
 
 **DEPLOYED — DUITKU PRODUCTION CONNECTION VERIFIED** within the latest bounded request: implement production credential support, install secrets, deploy BYOK and verify backend connectivity. This is NOT a paid transaction, fulfillment or complete sandbox payment gate.
 
@@ -19,7 +32,7 @@
 
 - Repository: https://github.com/Sparkmind-obp-off/Tolvey — **main**.
 - Live application: **https://webapp-3-38j.pages.dev**.
-- Verified production-connection deployment: https://9771b4b5.webapp-3-38j.pages.dev (final source-stamped redeploy is recorded in docs/14/session report).
+- Final source-stamped production-connection deployment: https://41ec3dbc.webapp-3-38j.pages.dev — source `d73a4df`, verified 2026-10-01; later documentation-only commits are not redeployed runtime code.
 - Platform: owner's Cloudflare Pages account through **CF BYOK**, existing project **webapp-3**; metadata agrees with config. No new unrelated project or DNS change.
 - Intended business domain `tolvey.biz.id` is not connected by this execution.
 - Production D1 remains `tolvey-production`; this connection-only release uses its existing foundation schema. No remote transaction migrations or test fixtures applied; no credentials stored in D1. Preview/staging has no DB binding and cannot share production DB.
@@ -73,6 +86,6 @@ Final regression: **237/237 tests in six suites**, typecheck/format/build passed
 
 ## Remaining work / next gate
 
-The latest credential-storage/backend-connectivity/deployment request is implemented. Original Phase 3 end-to-end sandbox gate is NOT complete, and production payment processing is NOT active. Before real commerce: separate authorization for transaction release, reviewed production canonical gateway/schema/private initiation, eligible real offers, reachable verified callback/status/replay, rate limits/monitoring/recovery, key rotation and controlled payment evidence. Actual fulfillment/delivery, catalog expansion, distribution and re-architecture remain outside this release. **Phase 4 not started.**
+The latest credential-storage/backend-connectivity/deployment request is implemented. Original Phase 3 end-to-end sandbox gate is NOT complete, and production payment processing is NOT active. Before real commerce: separate authorization for transaction release, reviewed production canonical gateway/schema/private initiation, eligible real offers, reachable verified callback/status/replay, rate limits/monitoring/recovery, key rotation and controlled payment evidence. Actual customer checkout/delivery, controlled publication, customer authorization/recovery, service execution and external-channel normalization remain unimplemented. The new audit specifies them without claiming completion. Independent product/content/read-only preparation can proceed under a next build request, while the integrated provider/payment gate remains required. **Phase 4 code not started.**
 
 See [docs/14](docs/14-duitku-pop-integration.md) for timestamped deployment/evidence and historical attempts; [docs/39](docs/39-vision-mission-north-star.md) remains strategic authority.

@@ -213,10 +213,10 @@ The objective is a working commercial loop, not a large feature inventory.
 ## 13. Current phase reality
 
 - Phase 1 — Foundation: complete.
-- Phase 2 — Transaction Core: complete.
-- Phase 3 — Duitku POP: code complete / sandbox blocked.
-- Phase 4 — Real Product Commerce: next engineering gate after Phase 3 live verification.
+- Phase 2 — Transaction Core: complete within provider-neutral local/test scope.
+- Phase 3 — Duitku POP: local contract code plus deployed production connection authentication verified; real sandbox full-payment gate still incomplete. Production transaction execution disabled.
+- Phase 4 — Real Product Commerce: not implemented. Its integrated payment gate depends on Phase 3 live proof; separately authorized product/package/read-only storefront preparation need not wait.
 - Phase 5 — Distribution: planned.
 - Brand/demand execution: continuous business activity.
 
-No production payment or live sandbox verification may be implied without evidence.
+No production payment or live sandbox verification may be implied without evidence. See docs/19 for the full-cycle implementation specification, docs/15 for dependencies and docs/16 for bounded sessions. Engine numbering (Own Commerce/Distribution/Brand) is separate from offering tiers (free/digital/services). Service inquiries are not paid service fulfillment. Baseline customer authorization, private delivery, exceptions/support and recovery cannot be deferred to a late hardening phase. Manual distribution/content is acceptable; speculative automation is not the first commercial objective.

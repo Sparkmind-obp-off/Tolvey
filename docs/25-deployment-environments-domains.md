@@ -1,5 +1,11 @@
 # TOLVEY — Deployment, Environments & Domains
 
+## Current deployment / audit status — 2026-10-01
+
+Last deployed code source `d73a4dfba04c8207f2b5f440e0052840cefdfc3d`: existing owner-account **CF BYOK** Pages project `webapp-3`, branch main, https://webapp-3-38j.pages.dev. Final immutable URL https://41ec3dbc.webapp-3-38j.pages.dev; production-connection auth verified, no invoice/payment. Encrypted provider/operator Secrets installed; transaction core/gateway execution stays disabled. Production DB retains foundation schema; no remote 0002–0004 migration. Preview/staging has no DB.
+
+The subsequent full-system audit changes documentation only, no redeploy/secret/DNS/resource mutation or new account/quota inspection. Later documentation SHA is not deployed source. Old Foundation-only/no-secret/no-deploy sections below are historical snapshots. Intended `tolvey.biz.id` and target branded Pages identity are still unconfigured/unverified; preserve existing project. Domain branding is not a reason to repeat infrastructure setup or silently migrate project. Before a future release verify actual isolated sandbox/staging capacity; never share production DB/delete unrelated databases to bypass quota.
+
 ## 1. Deployment identity
 The TOLVEY production application should have stable, recognizable deployment identity.
 

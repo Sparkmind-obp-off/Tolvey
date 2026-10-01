@@ -1,5 +1,11 @@
 # TOLVEY — Integration Architecture
 
+## Current integration status — 2026-10-01
+
+Production POP configuration/official endpoint selection, encrypted secrets and protected non-creating authentication check are deployed (`d73a4df`). Production payment gateway/callback execution remains disabled; real sandbox invoice/payment/callback/status interoperability gate incomplete. Last code tests: 237 local/workerd with strict provider stubs. Historical no-provider/no-file-use/220 statements below describe earlier checkpoints, not current release.
+
+No need to add another payment provider/framework to complete missing customer publication/access/delivery. R2 is the planned private-asset boundary; transactional email provider is unselected and only justified by an implemented recovery/notification need. Manual listing/support/content first; external normalized intake and service fulfillment remain unimplemented. Full integration/exception dependencies and official sources: docs/19.
+
 ## 1. Integration principle
 External systems are adapters, not sources of TOLVEY's canonical business model.
 
@@ -87,7 +93,7 @@ Internal local/test provider-neutral initiation/signal/fulfillment/refund-reques
 
 No provider calls, callbacks, Duitku, real payment, actual delivery or actual refund exist. Future adapter/gateway must verify provider/merchant authenticity before calling equivalent core orchestration; do not bypass production restrictions by passing a fake local/test environment. Refund completion remains unexposed. External side-effect idempotency/reconciliation belongs to the future adapter, not a claim of exactly-once delivery by the internal simulation.
 
-## 11. Current Phase 3 POP adapter
+## 11. Historical initial Phase 3 local POP adapter checkpoint
 
 CODE COMPLETE / SANDBOX BLOCKED. Provider-specific configuration/request/HMAC/form parsing/status mapping reside in flat `duitku-*` modules. Generic engine/domain/schema remain neutral, reused through a narrow payment-only service facade. No V2 checkout, provider refund, disbursement, marketplace or delivery.
 

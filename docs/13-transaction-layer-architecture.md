@@ -1,5 +1,11 @@
 # 13 — Transaction Layer Architecture
 
+## Current boundary / specification distinction — 2026-10-01
+
+The conceptual entity/event lists below are broader than implemented D1/API contracts (docs/21–22). Phase 2 local/test core is complete; POP adapter and production connection configuration are implemented, but production gateway and simulator remain forbidden. Connection auth is not paid-order proof. Missing customer ownership, principal-scoped checkout keys, pinned asset/entitlement delivery, late/ambiguous payment resolution and external-origin intake are explicitly specified in docs/19 and prioritized in docs/15. The Phase 2 evidence section is historical, not a claim that Phase 3 never exists now.
+
+Include FULFILLMENT_FAILED among alternate lifecycle states. REFUND_PENDING is request-only; REFUNDED vocabulary is not a refund-completion service. Exact-once internal records do not guarantee exactly-once external delivery.
+
 ## Purpose
 The TOLVEY Transaction Layer is the execution layer between a canonical TOLVEY offer and a completed customer transaction.
 

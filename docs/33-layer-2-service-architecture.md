@@ -7,7 +7,13 @@ Updated: 2026-09-30
 ## Purpose
 Layer 2 sells implementation, customization and human-assisted execution. Layer 1 sells reusable digital products.
 
-## Service families
+## First service workflow / acceptance — specification 2026-10-01
+
+Offer one clearly scoped inquiry path first; inquiry is not an order/revenue. Flow: qualification → scope/dependencies/capacity → accepted proposal/terms → agreed payment milestones → delivery/revisions → acceptance/handoff → support. Record deliverable, input deadlines, timeline, price, revision limit, change control, cancellation/refund and support window. Do not allow instant-buy for undefined bespoke work.
+
+Existing checkout fulfillment is DIGITAL/BLOCKED; SERVICE vocabulary is not a service execution implementation. Future typed scope snapshot/milestone/acceptance and secure client delivery require additive reviewed contracts. A future automation service is a possible customer offer, not a reason to automate TOLVEY before demand. Customization never changes reusable Layer 1 master files. See docs/19, docs/10 and docs/15.
+
+## Service families (candidate offerings, not delivery proof)
 
 ### TOLVEY Presence
 Website or landing-page implementation.

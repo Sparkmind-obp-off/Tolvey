@@ -16,7 +16,7 @@ Status: documentation established at the Phase 0 snapshot; Phase 1 now implement
 
 ## Business milestone 1 — Product proof
 
-- Define Money Kit v1
+- Select one real launch candidate; Money Kit v1 remains an optional working hypothesis
 - Validate target buyer/problem
 - Create minimum sellable product
 - Establish owned storefront
@@ -85,6 +85,26 @@ Context: baseline d0c7b5a has durable checkout/schema but no lifecycle. Add migr
 Reason/trade-off: revision-owned D1 batches and immutable operation/key/replay receipts provide concurrency/atomicity without queues or new dependencies. Expose a local/test-only simulation factory, not an arbitrary public success endpoint. Future real adapters require authenticated gateway review. REFUND_PENDING is request-only, never external refund confirmation.
 Evidence: 150 tests, compiled workerd lifecycle, eight rollback/retry paths, fresh/upgrade/FK/integrity, build/typecheck/format and PM2 deny-by-default. Git delivery recorded in final report. No money/customer/delivery/revenue/demand evidence manufactured.
 Affected docs: README, 00, 07, 09, 12, 13, 15, 21, 22, 23, 25, 26. No commercial-model or phase numbering change.
+
+### D-008 — Production connection is not commerce activation (2026-10-01)
+Decision: record `d73a4df` as the deployed production-connection release, not full Phase 3/payment completion.
+Evidence: 237 local/workerd tests and real deployed correct-signature/negative-control authentication, with no invoice; secrets stored encrypted. Production gateway/checkpoint/callback execution disabled, remote transaction migrations not applied.
+Trade-off: retain secure connectivity without exposing unfinished customer commerce. Original live sandbox gate remains incomplete; any alternative verification scope needs explicit approved gate revision. Affected: README, 00, 07, 11–15, 19, 21–23, 25–27, 34, 39.
+
+### D-009 — Three engines, offering tiers and phases are separate (2026-10-01)
+Decision: Own Commerce, Distribution, Brand/Demand are business engines; free/digital/services are offering tiers; 0–8 are engineering gates.
+Reason: ambiguous Layer 1/2 wording mixed distribution with services and made work look like expanding catalog inventory.
+Trade-off: keep existing product-tier labels where clearly scoped, correct engine labels and Money Kit compulsory wording. Affected: 06, 15–19, 27, 29–36, 39. No brand/model change or marketplace added.
+
+### D-010 — Commercial vertical slices and baseline launch dependencies (2026-10-01)
+Decision: docs/19 governs target full cycle; docs/15 lists gaps/dependencies. Publication/customer pages/access/private delivery/operator exceptions and baseline security/recovery belong to the integrated first loop. Phase 7 release does not wait for all distribution adapters or advanced dashboards.
+Reason: audit found strong local infrastructure but no customer-consuming loop; deferring baseline controls would produce unsafe paid launch.
+Trade-off: retain phase numbering and Phase 3 live gate; permit independently authorized package/content/read-only work during provider blocker, never paid execution. Services initially scoped inquiry; external intake needs distinct source model, not fake own checkout. Affected: 06–07, 10, 12–13, 15–23, 27, 32–38.
+
+### D-011 — Bounded session contract, not repeated brainstorming (2026-10-01)
+Decision: replace broad master prompt with objective/input/output/acceptance/environment/side-effect/non-goal/handoff contract. Targeted read/test iterations, full regression before code release; archive completed Phase 2 prompt.
+Reason: repeatedly reading 40 docs and probing unchanged credentials spends effort without closing product-to-customer dependencies.
+Trade-off: audits still read all docs when requested; ordinary continuation must inspect changed relevant source/contracts, not skip safety. One phase can span sessions; no public A/B/C subdivisions or invented credit guarantees. Current session changes docs only and does not authorize Phase 4 code/deploy/payment. Affected: 00, 15–16, 28, README.
 
 ## Change rule
 

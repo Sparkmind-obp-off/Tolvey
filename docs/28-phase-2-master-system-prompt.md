@@ -1,6 +1,10 @@
 # TOLVEY — PHASE 2 MASTER SYSTEM PROMPT
 
-## Mission
+## Archive notice — 2026-10-01
+
+**Historical execution prompt, not an active build instruction.** Phase 2 provider-neutral local/test gate was delivered at `7a3b80163b6fd6e65271a4e9b6a00c363ffceb3c` (150 tests). Do not rerun/rebuild completed Phase 2, apply its old no-provider statements to current production connection, or treat its session credit suggestion as measured cost. Current workflow/gates: docs/19 and docs/15; active session/master prompt: docs/16. Retained below to preserve original constraints and delivery history. Current production commerce remains disabled.
+
+## Mission (historical)
 
 Execute **PHASE 2 — TRANSACTION CORE** for the TOLVEY repository:
 

@@ -45,7 +45,13 @@ Planned:
 - distribution adapters
 - operational observability hardening
 
-## 8. Current evidence
+## 8. Current evidence — 2026-10-01
+
+Last code source/deployment `d73a4df`: **237 tests** locally/workerd, secure matching production provider config and encrypted Secrets, actual deployed Worker production authentication verified through non-creating signed/negative-control requests. Final URL https://41ec3dbc.webapp-3-38j.pages.dev, main https://webapp-3-38j.pages.dev. Production transactions/callback/checkpoint remain disabled; no real invoice/payment/delivery/refund or complete sandbox gate.
+
+Latest documentation audit reviewed all 40 docs, produced master full cycle (19), gap/dependency matrix (15), bounded execution prompts (16), minimum launch/operations/metrics and channel-policy clarification. These are specifications, not new application features or a redeploy. Public product/offer lists remain empty in read-only curl checks. The historical evidence below is not the current test count/runtime status.
+
+### Historical checkpoint evidence
 Phase 1 Foundation Gate:
 - executable application
 - real D1 schema
@@ -74,7 +80,7 @@ Phase 3 code verification (2026-10-01): CODE COMPLETE / SANDBOX BLOCKED.
 ## 9. What is intentionally not claimed
 - no real customer transaction yet
 - no verified production payment
-- no Duitku production integration
+- no Duitku production transaction execution (production connection authentication/configuration is integrated and verified)
 - no fulfillment proof
 - no marketplace
 - no seller infrastructure

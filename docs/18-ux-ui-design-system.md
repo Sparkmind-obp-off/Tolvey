@@ -93,6 +93,14 @@ Target WCAG-aligned practices:
 - reduced-motion support
 - meaningful status announcements
 
+## Minimal launch surfaces — specification 2026-10-01
+
+Customer: product detail, authoritative checkout summary/contact/terms, neutral payment return, ownership-protected status/access, help/policies/recovery; services use scoped inquiry. Include unavailable/draft-hidden, expired, pending-verification, delivery-issue and missing-session states. Do not expose buy/download until corresponding gates pass. No fabricated orders/dashboard statistics.
+
+Operator: narrow publication/review action and order/exception/support view first, not the whole module inventory. Existing private connection token is not a browser admin session.
+
+Render server-side with small enhancements; test mobile width/keyboard, labels/errors and honest status mapping. Read-only product work can progress independently with authorization while payment gate remains blocked. Use docs/19 for customer/service/external journeys. A compact wireframe/tokens/checklist within the implementation session is enough; a separate elaborate design project is not prerequisite to one page.
+
 ## 10. Design deliverables before major storefront work
 - sitemap
 - customer journey map

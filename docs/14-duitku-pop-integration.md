@@ -14,7 +14,13 @@
 - Existing Pages project `webapp-3`, main, own Cloudflare account/BYOK. Production Secrets installed successfully through stdin: `DUITKU_API_KEY`, `DUITKU_MERCHANT_CODE`, `DUITKU_OPERATOR_TOKEN`. Uploaded provider file was parsed only in memory. Operator tokens generated randomly and never saved in files or printed. No DB/frontend/source secret storage, no DNS/project creation. Exposed provider key should be rotated through Duitku and updated under the same Cloudflare secret name before real payment activation.
 - Production vars: APP_ENV/DUITKU_ENV production, POP connection flag true, transaction flag false, callback/return on existing live HTTPS origin. Preview has no production DB. Local dev/PM2 force provider flags off/sandbox to avoid inheriting production vars.
 
-### Actual deployment / live evidence
+### Final committed-source stamp / audit pointer
+
+Final code delivery: `d73a4dfba04c8207f2b5f440e0052840cefdfc3d`. Final immutable deployment https://41ec3dbc.webapp-3-38j.pages.dev, deployment ID `41ec3dbc-3c98-4e1c-896c-a826267e39b1`, source `d73a4df`. At 2026-10-01T10:28:27.668360Z both immutable and main URLs passed health/ready/catalog/return 200, unauthenticated private check 401, authenticated production connection 200 with `invoice_created=false,payments_enabled=false`, callback/checkpoint 503. The earlier 9771b4b5 deployment below is superseded by this source-stamped redeploy. No invoice/payment/callback processing/delivery proof implied.
+
+Subsequent documentation audit updates docs/15–16/19 and current status references; it does not redeploy runtime or call authenticated provider checks. Later documentation SHA is not this deployed source. All sandbox/credential/no-deploy statements in **historical** sections describe their original checkpoint; current config/secret/deployment contract is the production-connection section above. No Phase 4 code is implemented by the audit.
+
+### Actual deployment / live evidence (release chronology)
 
 - Deployment + secret installation first performed at approximately 2026-10-01T10:13Z. Health/readiness/catalog/neutral return HTTP 200; private check unauthenticated 401; callback/checkpoint 503. Authentication initially 503, not claimed successful. Operator-safe diagnostics used to resolve transport; an early immutable URL 404 during deployment access was not treated as success.
 - Successful verified deployment: **https://9771b4b5.webapp-3-38j.pages.dev**, live main **https://webapp-3-38j.pages.dev**, approximately 2026-10-01T10:20Z. Actual deployed Worker `/ready` HTTP 200, authenticated POST connection check HTTP 200: `{environment:"production",authentication:"verified",invoice_created:false,payments_enabled:false}`. These were real outbound Duitku production calls using Cloudflare runtime secrets, not stubs or a uploaded-file dependency.

@@ -63,9 +63,9 @@ TOLVEY therefore operates three connected engines:
 
 The loop matters more than any individual feature.
 
-## 5. Three-layer business model
+## 5. Three-engine business model (not offering-tier numbering)
 
-### Layer 1 — OWN SHOP
+### Engine 1 — OWN COMMERCE / OWN SHOP
 
 TOLVEY owns the primary commerce destination.
 
@@ -75,7 +75,7 @@ The own shop is the canonical commercial home.
 
 It does not need to receive every transaction. A customer may reasonably choose an external channel.
 
-### Layer 2 — DISTRIBUTION
+### Engine 2 — DISTRIBUTION
 
 External platforms extend TOLVEY's reach.
 
@@ -90,7 +90,7 @@ Examples may include:
 
 These are examples, not permanent commitments. Channel admission is based on product fit, platform rules, economics, operational effort, and measurable attribution.
 
-### Layer 3 — BRAND / DEMAND
+### Engine 3 — BRAND / DEMAND
 
 Brand channels create and capture attention.
 
@@ -230,7 +230,7 @@ The technical system should mirror the business:
 
 Canonical persistence remains internal to TOLVEY.
 
-Duitku is a payment adapter, not the commerce core. Official Duitku documentation describes POP as the easier integration path with a pre-built payment-method page, while V2 is intended for a more customized payment page. This supports keeping the TOLVEY checkout domain separate from provider-specific logic. citeturn0search0turn0search2
+Duitku is a payment adapter, not the commerce core. Official Duitku documentation describes POP as the easier integration path with a pre-built payment-method page, while V2 is intended for a more customized payment page. This supports keeping the TOLVEY checkout domain separate from provider-specific logic. Sources: https://docs.duitku.com/pop/id/ and https://docs.duitku.com/payment-gateway/overview/. POP also supports hosted paymentUrl redirect; a popup is not a launch prerequisite.
 
 The production architecture should remain compatible with the existing Cloudflare + D1 direction and should avoid premature microservices.
 
@@ -255,13 +255,13 @@ Visual polish is valuable, but it cannot outrank the transaction and evidence lo
 
 As of 2026-10-01:
 - Phase 1 — Foundation: complete.
-- Phase 2 — Transaction Core: complete.
-- Phase 3 — Duitku POP: code complete, sandbox live verification blocked.
-- Phase 4 — Real Product Commerce: not started.
+- Phase 2 — Transaction Core: complete within provider-neutral local/test scope, not customer/production commerce.
+- Phase 3 — Duitku POP: local adapter code and deployed production connection authentication verified; full live sandbox invoice/payment/callback/status gate remains incomplete. Production execution is disabled.
+- Phase 4 — Real Product Commerce: not implemented; independent package/read-only storefront preparation may be authorized without skipping payment gates.
 - Phase 5 — Distribution: planned.
 - Brand/demand execution is a continuous business activity and does not need to wait for every engineering phase.
 
-No document may represent Phase 3 as live-verified until an actual approved sandbox transaction and callback/status flow has been executed and evidenced.
+No document may represent the full Phase 3 payment gate as live-verified until an actual approved sandbox transaction and callback/status flow has been executed and evidenced. Production connection verification is a different, narrower fact. Master customer/operations cycle: docs/19; dependencies/session strategy: docs/15–16. Security/authorization/recovery baseline precedes paid launch; Brand/Demand can progress independently. No guarantee of rapid revenue.
 
 ## 14. Explicit non-goals
 

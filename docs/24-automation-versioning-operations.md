@@ -30,7 +30,7 @@ TOLVEY should move upward only when evidence justifies it.
 - analytics aggregation
 - operational alerts
 
-These are future capabilities, not current Phase 1 features.
+These are capability candidates, not a claim of current automation. Local POP callback verification/idempotency code exists and production connection is deployed, but actual production callback/payment/delivery execution is disabled. Payment authentication, durable idempotency, ownership and safe fulfillment/reconciliation are mandatory reliability controls for launch, not speculative growth automation to defer. Automatic marketplace/content publishing, synchronization and optimization remain deferred; manual listing/support/review is sufficient initially. Current boundaries: docs/19 and docs/15.
 
 ## 4. Versioning
 Version:

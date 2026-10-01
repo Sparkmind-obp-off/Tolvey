@@ -1,5 +1,26 @@
 # TOLVEY — Testing & Release
 
+## Current evidence / audit distinction — 2026-10-01
+
+Last code release `d73a4df`: **237/237 tests, six suites**, typecheck/format/build passed, 65.58 kB Worker. Real deployed production authentication check returned verified with no invoice/payments enabled. Final immutable URL https://41ec3dbc.webapp-3-38j.pages.dev. Historical 69/109/150/220 counts below are checkpoint evidence, not current full-suite totals.
+
+This subsequent system audit is documentation-only. Read-only curl health/ready/catalog HTTP 200 and empty lists were rechecked; no provider/payment test, remote migration or redeploy executed. The original real sandbox full-payment gate, customer checkout, private delivery and recovery are not complete. Current audit validation: 40/40 disposition coverage, local links/references/fences and diff checks; typecheck/format/build (65.58 kB), Git integrity and **5/5 repository safety tests passed**. Full 237-test suite not rerun: runtime/config/migrations/tests unchanged. Markdown is excluded from configured Prettier; explicit reference/fence/diff review is separate. Git delivery reported after push.
+
+## Target integrated acceptance matrix (not yet passed)
+
+| Capability | Required tests / runtime proof |
+| --- | --- |
+| Publication → customer page | Persisted real/test-labeled package, active parents, missing asset rejection, draft/archive hidden, unauthorized mutation denial, public private-field exclusion, responsive/keyboard/escaping/404 |
+| Customer checkout/status | Guest scoped ownership, CSRF/origin, expiry/revocation/recovery, principal-scoped keys, same-meaning replay/conflict/concurrency, authoritative IDR quantity/total, other-customer denial, abuse/protection failure |
+| Provider live gate | Isolated supported deployed sandbox, real invoice/hosted payment/reachable callback/common-status match, duplicate/invalid/failure/missing callback; no stubs substituted |
+| Fulfillment/private assets | Confirmed-payment handoff, unique entitlement, pinned version/hash, unpaid/other-customer/expired/revoked denial, actual retrieval, missing object/timeout/retry, no double grant or fake customer-use event |
+| Exceptions/support | RESERVED ambiguity no blind retry, READY attachment recovery, late paid after expiry, paid-delivery failure, minimal operator view, verified assisted recovery and policy-driven refund request; no fake refund completion |
+| External orders/services | Unique channel reference and verified source, no fake own checkout, mapping/version/fees/unknown values; service scope/acceptance distinct from DIGITAL placeholder |
+| Recovery/release | Fresh/upgrade additive migrations, immutable history, compatible app rollback, isolated data recovery, disable-new-checkout and post-restore external reconciliation; separate authorized controlled production transaction |
+| Metrics | Deduped paid/fulfilled denominators, test/sandbox/control exclusions, source uncertainty, fees/refunds/cost facts, no frontend financial truth |
+
+Run source/unit, actual D1 integration and compiled Pages/workerd checks; browser checks exercise consuming customer UI. Live sandbox proof and controlled production proof are separate environment gates. Development mock payment completion is not demand/revenue. Do not drop repository safety tests blindly when introducing approved new commerce routes; replace absence assertions with explicit auth/config/ownership/production-release protections.
+
 ## Test layers
 ### Product
 Validate product records, versions, offers, assets, pricing, delivery instructions, and publication state.
@@ -14,7 +35,7 @@ Validate channel mappings, listing content, identifiers, pricing, availability, 
 Validate secret handling, access control, webhook validation, input validation, rate limiting, logging hygiene, and production/dev separation.
 
 ## Critical end-to-end test
-Demand signal → Product → Offer → Storefront → Checkout → Order → Fulfillment → Customer receipt/use → Analytics.
+Demand signal → Product/package/version → Offer/publication → Storefront → owned Checkout/pending Order → verified Payment → private Fulfillment/access → Customer receipt/use → Support/reconciliation → Evidence. External checkout and service paths have separate acceptance contracts (docs/19).
 
 ## Release gates
 A release is production-ready only when:
@@ -83,7 +104,7 @@ Redeploy a previously verified Pages artifact/commit compatible with the existin
 ## Operational rule
 Prefer small, reversible releases. Ship the smallest change that proves or improves a real business workflow, then observe before expanding scope.
 
-## Phase 3 local contract evidence — 2026-10-01
+## Historical Phase 3 initial local contract evidence — 2026-10-01
 
 220 passing tests in six suites (150 prior + 70 POP), typecheck/format/build (~62.73 kB), npm audit zero known vulnerabilities. No separate lint tool is configured. Core schema/state/Phase 2 regression preserved, existing migrations unchanged. Tests cover canonical initiation, HMAC RFC4231/independent Node formulas, config failures/separation, strict request/response/form limits, money/reference/merchant/status mismatches, unknown/cancelled/expired/paid orders, 10 concurrent initiations (one outbound invoice), 12 duplicate callbacks (one confirmation), conflicts, unsigned-result tampering, status outage, transient canonical attachment recovery and audit rollback/retry. Logs/DTOs contain no test secret/raw SQL/body.
 

@@ -42,6 +42,12 @@ Product creation, packaging, distribution, checkout, fulfillment, and learning a
 ## 6. Product hierarchy
 TOLVEY → Product Family → Product → Product Version → Offer → Asset/Delivery.
 
+## Minimum first-loop acceptance — audit enhancement 2026-10-01
+
+Three engines remain Own Commerce, Distribution and Brand/Demand (docs/39/34). Implement one candidate, not every family. The customer can understand approved package/version/license/terms; publication is controlled; checkout/status/download require scoped ownership and abuse protection; payment is provider-verified; delivery uses pinned private assets; operator sees exceptions/support/recovery. Services initially use scoped inquiry, not instant DIGITAL fulfillment. External orders preserve channel-owned checkout evidence and unique source IDs.
+
+These requirements are target acceptance, not current implemented capability. Integrated non-production loop precedes separately authorized controlled production release; real customer validation requires independent use/economics evidence. Current gaps/status/dependencies: docs/15; full-cycle contract: docs/19; MVP: docs/06.
+
 ## 7. V1 capability map
 ### Foundation
 Product, ProductVersion, Offer, D1, read APIs, Cloudflare runtime.

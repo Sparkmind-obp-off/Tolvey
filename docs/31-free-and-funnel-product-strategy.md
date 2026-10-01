@@ -7,6 +7,10 @@ Updated: 2026-09-30
 ## Purpose
 Free products are useful acquisition assets that demonstrate product quality and route qualified users toward paid products.
 
+## Launch boundary — 2026-10-01
+
+A free product is optional discovery work, not a prerequisite before one paid launch candidate or a separate revenue engine. Do not implement every step of this possible funnel before selling a useful product. Free access uses its own reviewed grant/download path when needed; never mark a zero-price download as provider-confirmed payment or paid order. No compulsory email gate without stated purpose/consent; marketing remains separate. Current customer delivery/funnel implementation is not complete (docs/19/27).
+
 ## Funnel
 Free Product → Single Product → Kit → Bundle → Complete System → Layer 2 Service when implementation is requested.
 

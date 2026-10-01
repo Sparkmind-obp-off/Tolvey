@@ -1,10 +1,14 @@
 # TOLVEY Digital Product Catalog V1
 
-Status: Commercial catalog definition
+Status: Product idea inventory and price hypotheses — not live catalog or launch commitment
 Version: v1.0
 Updated: 2026-09-30
 
-## 1. Launch catalog
+## Launch selection rule — audit enhancement 2026-10-01
+
+Choose **one** candidate with a real buyer/job, working package, license, compatibility, approved price/terms and feasible fulfillment/support. Money Kit is optional hypothesis, not privileged by this list. No item below is asserted built/listed/sold/validated. Prices must be approved per Offer and tested against actual fees/costs; do not assume low price is viable or guaranteed to convert. Product creation is a separate real deliverable from building commerce software.
+
+## 1. Candidate catalog
 
 ### MONEY
 **Money Tracker** — income, expense, category and balance tracking.
