@@ -68,6 +68,7 @@ Start with:
 | 36 | Product Validation & Launch Gates | Product evidence gates |
 | 37 | Marketplace Listing Standard | Channel listing standard |
 | 38 | Distribution Operations & Attribution | Distribution operations/measurement |
+| 39 | Vision, Mission & North Star | Strategic authority |
 
 ## Status vocabulary
 
