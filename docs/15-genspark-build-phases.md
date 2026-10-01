@@ -5,6 +5,24 @@ Build TOLVEY as a production-oriented Product House Hub + Commerce House Hub, us
 
 The build is divided into gated phases. One phase should normally be one focused Genspark session. Do not burn a large session trying to build the entire system blindly.
 
+## Strategic North Star — Mandatory Context
+
+Before making implementation decisions, read `docs/39-vision-mission-north-star.md`.
+
+TOLVEY has three connected business engines:
+
+1. **Own Commerce:** TOLVEY's own shop is the canonical owned commerce destination, including catalog, product pages, checkout, payment, order and fulfillment.
+2. **Distribution:** external commerce platforms provide additional reach and optional checkout paths. Their listings are derived from TOLVEY's canonical product truth.
+3. **Brand / Demand:** social, content and search channels create awareness, demand signals and traffic that may route customers to either TOLVEY or an approved external commerce channel.
+
+The architectural principle is **ONE PRODUCT, MANY DOORS**.
+
+The commercial loop is:
+
+`Demand → Product → Offer → Publish → Distribute → Sell → Deliver → Measure → Learn → Improve`
+
+Do not build multi-vendor marketplace infrastructure or duplicate product truth per channel. Brand/demand work is continuous business activity and does not need to wait for engineering phases to finish.
+
 ## Operating rule
 One session = one bounded objective = one verifiable artifact/state change.
 
